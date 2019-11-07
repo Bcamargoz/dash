@@ -46,12 +46,13 @@ class SalesXHourComponent extends React.PureComponent {
         )
 
         const chart2 = () => (
-            <View style={{ height: 200, width: '95%', padding: 20, flexDirection: 'row' }}>
+            <View style={{ height: 200, width: '95%', padding: 10, flexDirection: 'row' }}>
                 <YAxis
                     data={labels2}
-                    style={{ marginBottom: 10}}
-                    contentInset={{ top: 0, bottom: 20 }}
+                    style={{ marginBottom: 10 }}
+                    contentInset={{ top: 3, bottom: 20 }}
                     svg={axesSvg}
+                    numberOfTicks={5}
                 />
 
                 <View style={{ flex: 1, marginLeft: 10 }}>
@@ -64,6 +65,7 @@ class SalesXHourComponent extends React.PureComponent {
                         contentInset={{ top: 0, bottom: 10 }}
                         svg={{ fill: 'rgba(34, 164, 85, 0.5)' }}
                         curve={ shape.curveMonotoneX }
+                        numberOfTicks={5}
                     >
                         <Grid/> 
                         <Line />
@@ -80,7 +82,7 @@ class SalesXHourComponent extends React.PureComponent {
                         scale={ scale.scaleTime }
                         style={{ marginHorizontal: -15, height: 20 }}
                         contentInset={{ left: 20, right: 25 }}
-                        formatLabel={ (value) => dateFns.format(value, 'hh') }
+                        formatLabel={ (value) => dateFns.format(value, 'HH') }
                     />
                 </View>
             </View>

@@ -28,7 +28,7 @@ class MostSoldCategoriesComponent extends React.PureComponent {
                 <Svg height="25" width="25">
                     <Circle cx="10" cy="10" r="10" fill={item.svg.fill} />
                 </Svg>
-                <Text>{item.category}</Text>
+                <Text style={{fontFamily: "Nunito-Regular"}}>{item.category}</Text>
             </View>
           );
         });

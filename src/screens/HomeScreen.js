@@ -197,10 +197,10 @@ class HomeScreen extends React.Component {
       if(warehouses.length > 1) {
         return (
         <View style={styles.select}>
-          <Text style={{ fontSize: 14, color: 'grey', paddingTop: 10 }}>Almacen seleccionado:</Text>
+          <Text style={{ fontSize: 14, color: 'grey', paddingTop: 10, fontFamily: "Nunito-Regular" }}>Selecciona un almacen:</Text>
           <Picker
             selectedValue={this.state.warehouseSelected}
-            style={{ height: 50 }}
+            style={{ height: 50, fontFamily: "Nunito-Regular" }}
             mode={'dialog'}
             onValueChange={(itemValue, itemIndex) =>
               this.setState({warehouseSelected: itemValue},() => {this.loadData(this.state.warehouseSelected)})
@@ -212,7 +212,10 @@ class HomeScreen extends React.Component {
         </View>
         )
       } else {
-        return <Text>{ !warehouses[0] ? 'Almacen' : warehouses[0].name }</Text>
+        return <View>
+            <Text style={{ fontFamily: "Nunito-Regular" }}>Información de tu almacen</Text>
+            <Text style={{ fontFamily: "Nunito-Regular" }}>{ !warehouses[0] ? '' : warehouses[0].name }</Text>
+          </View>
       }
       
     }
@@ -227,20 +230,21 @@ class HomeScreen extends React.Component {
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
           <View style={styles.statusBar}>
-            <View style={styles.menu}>
+            <View style={{ width: '20%', justifyContent: 'flex-start'}}>
               <TouchableOpacity
                 style={styles.menu}
                 onPress={navigation.openDrawer}
               >
-                <Icon name='align-justify' size={30} color='white' />
+                <Icon name='bars' size={35} color='white' />
               </TouchableOpacity>
             </View>
-            <Image
-              source={require("../assets/logo_white.png")}
-              style={styles.image}
-            />
-            <View style={styles.menu}>
-              
+            <View style={{ width: '40%'}}>
+              <Image
+                source={require("../assets/logo_white.png")}
+                style={styles.image}
+              />
+            </View>
+            <View style={{ width: '20%', justifyContent: 'flex-end'}}>
             </View>
           </View>
           
@@ -294,12 +298,7 @@ class HomeScreen extends React.Component {
             <DaysSalesComponent info={daySales}></DaysSalesComponent>
             {/** Almacen */}
 
-            <View style={styles.chart}>
-              <Button
-                onPress={this.onLogout}
-                title='Salir'
-              />
-            </View>
+
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -337,11 +336,16 @@ export default connect(mapStateToProps, {
 const styles = StyleSheet.create({
   scrollView: {
    // backgroundColor: colors.GREY_DARK,
-    minHeight: '100%'
+    minHeight: '100%',
+    backgroundColor: '#f1f3f6'
   },
   select: {
     paddingLeft: 10,
     paddingRight: 10
+  },
+  body: {
+    paddingBottom: 20,
+    backgroundColor: "#f1f3f6"
   },
   statusBar: {
     backgroundColor: colors.DARK,

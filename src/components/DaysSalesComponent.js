@@ -57,7 +57,6 @@ class DaysSalesComponent extends React.PureComponent {
   }
 
     render() {
-
         const { info } = this.props;
         console.log(info)
         return (
@@ -140,6 +139,7 @@ const styles = StyleSheet.create({
       borderWidth: 1.2,
       borderColor: '#d6d7da',
       flexDirection: 'row',
+      backgroundColor: '#fff' 
     },
     itemG1img: {
       width: '40%', // is 50% of container width
@@ -169,10 +169,12 @@ const styles = StyleSheet.create({
     },
     textoG1 : {
         fontSize: 14,
-        color: 'grey'
+        color: 'grey',
+        fontFamily: "Nunito-Regular"
     },
     textoG2 : {
         fontSize: 18,
+        fontFamily: "Nunito-Bold"
     }
   });
 

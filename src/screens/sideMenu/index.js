@@ -19,7 +19,7 @@ class SideMenu extends Component {
       <TouchableHighlight onPress={method}>
         <View style={styles.containerItem}>
           <View style={styles.containerIcon}>
-            <Icon name={icon} color={"#fff"} size={15} />
+            <Icon name={icon} color={"#fff"} size={25} />
           </View>
           <Text style={styles.textItem}>{name}</Text>
         </View>
@@ -43,8 +43,10 @@ class SideMenu extends Component {
           />
         </View>
         <ScrollView style={styles.containerItems}>
-          {renderItem('Inf. Ventas Diarias', 'file', () => navigation.navigate('Tickets'))}
-          {renderItem('Más Funcionalidades', 'plus', () => {
+          {renderItem('Dashboard', 'chart-bar', () => navigation.navigate('Home'))}
+          {renderItem('Hist. Ventas', 'clock', () => navigation.navigate('SalesHistory'))}
+          {renderItem('Soporte', 'user-cog', () => navigation.navigate('Help'))}
+          {/*renderItem('Más Funcionalidades', 'plus', () => {
             const url = 'https://pos.vendty.com';
 
             Linking.canOpenURL(url).then(supported => {
@@ -52,7 +54,7 @@ class SideMenu extends Component {
                 Linking.openURL(url);
               }
             })
-          })}
+          })*/}
           {renderItem('Cerrar Sesión', 'power-off', logout)}
         </ScrollView>
       </View>
@@ -90,8 +92,9 @@ const styles = {
     padding: 10,
   },
   containerIcon: {
-    width: 25,
+    width: 30,
     marginRight: 20,
+    marginLeft: 20,
   },
   textItem: {
     textAlign: 'center',

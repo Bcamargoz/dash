@@ -103,7 +103,7 @@ class InfoWarehouseComponent extends React.PureComponent {
                             <NumberFormat value={info.cost} displayType={'text'} thousandSeparator={true} prefix={'$'} renderText={value => <Text style={styles.textoG2}>{value}</Text>} />
                         </View>
                     </View>
-                    </View>
+                </View>
                 <View style={styles.grafica1}>
                     <View style={styles.itemG1}>
                         <View style={styles.itemG1img}>
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
       flex: 1,
       flexDirection: 'row',
       justifyContent: 'space-around',
-      paddingTop: 10
+      paddingTop: 10,
     },
     itemG1: {
       width: '95%', // is 50% of container width
@@ -154,6 +154,7 @@ const styles = StyleSheet.create({
       borderWidth: 1.2,
       borderColor: '#d6d7da',
       flexDirection: 'row',
+      backgroundColor: '#fff' 
     },
     itemG1img: {
       width: '40%', // is 50% of container width
@@ -178,10 +179,12 @@ const styles = StyleSheet.create({
     },
     textoG1 : {
       fontSize: 14,
-      color: 'grey'
+      color: 'grey',
+      fontFamily: "Nunito-Regular"
     },
     textoG2 : {
         fontSize: 18,
+        fontFamily: "Nunito-Bold"
     }
   });
 

@@ -71,7 +71,8 @@ class PieChartWithCenteredLabels extends React.PureComponent {
                         fill={'white'}
                         textAnchor={'middle'}
                         alignmentBaseline={'middle'}
-                        fontSize={20}
+                        fontSize={18}
+                        fontFamily={"Nunito-Bold"}
                         stroke={'black'}
                         strokeWidth={0.5}
                     >

@@ -1,10 +1,27 @@
-import React from 'react'
-import { View, Text } from 'react-native'
-import { BarChart, XAxis, Grid } from 'react-native-svg-charts'
-import { Text as TextSvg } from 'react-native-svg'
+import React from 'react';
+import { View, Text, ScrollView } from 'react-native';
+import { BarChart, XAxis, Grid } from 'react-native-svg-charts';
+import { Text as TextSvg } from 'react-native-svg';
 import CardViewComponent from './CardViewComponent';
+import NumberFormat from 'react-number-format';
 
 class SalesLastSevenDaysComponent extends React.PureComponent {
+
+    formatMoney = (amount, decimalCount = 2, decimal = ".", thousands = ",") => {
+        try {
+          decimalCount = Math.abs(decimalCount);
+          decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+      
+          const negativeSign = amount < 0 ? "-" : "";
+      
+          let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+          let j = (i.length > 3) ? i.length % 3 : 0;
+      
+          return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+        } catch (e) {
+          console.log(e)
+        }
+    };
 
     render() {
 
@@ -25,14 +42,14 @@ class SalesLastSevenDaysComponent extends React.PureComponent {
                     alignmentBaseline={ 'middle' }
                     textAnchor={ 'middle' }
                 >
-                    {value}
+                    {'$' + this.formatMoney(value, 0)}
                 </TextSvg>
             ))
         )
 
         const chart = () => (
-            <View style={{}}>
-            <View style={{ height: 210, padding: 20, paddingTop: 30 }}>
+            <ScrollView horizontal={true} style={{}}>
+                <View style={{ height: 210,  width: 550, padding: 20, paddingTop: 30 }}>
                     <BarChart
                         style={{ flex: 1 }}
                         data={data}
@@ -59,7 +76,7 @@ class SalesLastSevenDaysComponent extends React.PureComponent {
                         contentInset={{ left: 20, right: 20}}
                     />
                 </View>
-                </View>
+            </ScrollView>
         )
 
         return (
