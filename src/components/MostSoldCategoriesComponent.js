@@ -55,7 +55,7 @@ class MostSoldCategoriesComponent extends React.PureComponent {
 
         const chart = () => (
             <View style={{  flex: 1, flexDirection: "row", paddingTop: 10 }}>
-                <View style={{ width: '40%' }}>
+                <View style={{ width: '40%', paddingLeft: '2%' }}>
                     { this.renderData(pieData) }
                 </View>
                 <View style={{ width: "60%" }}>

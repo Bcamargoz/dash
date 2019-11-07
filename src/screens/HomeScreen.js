@@ -7,7 +7,9 @@ import {
   Text,
   Image,
   Picker,
-  Button
+  Button,
+  TouchableWithoutFeedback,
+  TouchableOpacity
 } from 'react-native';
 
 import colors from '../vars/colors';
@@ -34,6 +36,11 @@ import MostSoldCategoriesComponent from '../components/MostSoldCategoriesCompone
 import PaymentMethodsDayComponent from '../components/PaymentMethodsDayComponent';
 import DaysSalesComponent from '../components/DaysSalesComponent';
 
+import firebase from "react-native-firebase";
+import moment from 'moment';
+
+import Icon from 'react-native-vector-icons/dist/FontAwesome';
+
 class HomeScreen extends React.Component {
 
   constructor(props) {
@@ -44,13 +51,90 @@ class HomeScreen extends React.Component {
       warehouseSelected: 0,
       warehouseLoaded: 0,
       auth: {},
-      days: 7
+      days: 7,
+      enableNotification: true,
+      isDateTimePickerVisible: false,
+      notificationTime: moment().add(1, 'minute')
     }
   }
 
   componentDidMount() {
     this.init();
+    // Create notification channel required for Android devices
+    this.createNotificationChannel();
+  
+    // Ask notification permission and add notification listener
+    this.checkPermission();
+
+    this.setReminder();
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { notificationTime, enableNotification } = this.state;
+
+    if (enableNotification !== prevState.enableNotification || notificationTime !== prevState.notificationTime) {
+      this.setReminder();
+    }
+  }
+
+  setReminder = async () => {
+    const { notificationTime, enableNotification } = this.state;
+
+    if (enableNotification) {
+      firebase.notifications().scheduleNotification(this.buildNotification(), {
+        fireDate: notificationTime.valueOf(),
+        repeatInterval: 'day',
+        exact: true,
+      });
+    } else {
+      return false;
+    }
+  };
+
+  buildNotification = () => {
+    const title = Platform.OS === 'android' ? 'Informe Diario' : '';
+    const notification = new firebase.notifications.Notification()
+      .setNotificationId('1')
+      .setTitle(title)
+      .setSubtitle("")
+      .setBody('Tu informe diario de ventas esta listo!')
+      .android.setPriority(firebase.notifications.Android.Priority.High)
+      .android.setChannelId('reminder')
+      .android.setAutoCancel(true)
+      .android.setSmallIcon('ic_push');
+    return notification;
+  };
+
+  createNotificationChannel = () => {
+    // Build a android notification channel
+    const channel = new firebase.notifications.Android.Channel(
+      "reminder", // channelId
+      "Reminders Channel", // channel name
+      firebase.notifications.Android.Importance.High // channel importance
+    ).setDescription("Used for getting reminder notification"); // channel description
+    // Create the android notification channel
+    firebase.notifications().android.createChannel(channel);
+  };
+  
+  checkPermission = async () => {
+    const enabled = await firebase.messaging().hasPermission();
+    if (enabled) {
+      // We've the permission
+      this.notificationListener = firebase
+        .notifications()
+        .onNotification(async notification => {
+          // Display your notification
+          await firebase.notifications().displayNotification(notification);
+        });
+    } else {
+      // user doesn't have permission
+      try {
+        await firebase.messaging().requestPermission();
+      } catch (error) {
+        Alert.alert("No se puede acceder al permiso de notificación. Habilite el Permiso de notificación desde la configuración");
+      }
+    }
+  };
 
   async init() {
     const { getLoginData, getWarehouses } = this.props;
@@ -90,6 +174,9 @@ class HomeScreen extends React.Component {
       getInfoWarehouses
     } = this.props;
     const { warehouseSelected } = this.state;
+    this.setState({
+      days: days
+    });
     getInfoWarehouses(warehouseSelected, days);
   }
   
@@ -130,6 +217,9 @@ class HomeScreen extends React.Component {
       
     }
     //console.log(infoWarehouse);
+
+    const {days, notificationTime} = this.state;
+    const { navigation } = this.props;
     return (
       <>
       <SafeAreaView>
@@ -137,10 +227,21 @@ class HomeScreen extends React.Component {
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
           <View style={styles.statusBar}>
+            <View style={styles.menu}>
+              <TouchableOpacity
+                style={styles.menu}
+                onPress={navigation.openDrawer}
+              >
+                <Icon name='align-justify' size={30} color='white' />
+              </TouchableOpacity>
+            </View>
             <Image
               source={require("../assets/logo_white.png")}
               style={styles.image}
             />
+            <View style={styles.menu}>
+              
+            </View>
           </View>
           
           <View style={styles.body}>
@@ -174,15 +275,21 @@ class HomeScreen extends React.Component {
 
             {/** Almacen */}
             <View style={styles.containerButton}>
-              <View style={styles.buttonContainer}>
-                <Button title="7 dias" color='#545b62' onPress={() => this.setDays(7)}/>
-              </View>
-              <View style={styles.buttonContainer}>
-                <Button title="14 dias" color='#545b62' onPress={() => this.setDays(14)}/>
-              </View>
-              <View style={styles.buttonContainer}>
-                <Button title="30 dias" color='#545b62' onPress={() => this.setDays(30)}/>
-              </View>
+                <TouchableWithoutFeedback onPress={() => this.setDays(7)}>
+                  <View style={{ width: '33%', height: 40, flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: days == 7 ? '#545b62' : '#6c757d', borderBottomLeftRadius: 15,  borderTopLeftRadius: 15  }}>
+                    <Text style={{ color:'#fff' }}>7 dias</Text>
+                  </View>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => this.setDays(14)}>
+                  <View style={{ width: '33%', height: 40, flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: days == 14 ? '#545b62' : '#6c757d'  }}>
+                    <Text style={{ color:'#fff' }}>14 dias</Text>
+                  </View>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => this.setDays(30)}>
+                  <View style={{ width: '33%', height: 40, flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: days == 30 ? '#545b62' : '#6c757d', borderBottomRightRadius: 15, borderTopRightRadius: 15  }}>
+                    <Text style={{ color:'#fff' }}>30 dias</Text>
+                  </View>
+                </TouchableWithoutFeedback>
             </View>
             <DaysSalesComponent info={daySales}></DaysSalesComponent>
             {/** Almacen */}
@@ -239,13 +346,14 @@ const styles = StyleSheet.create({
   statusBar: {
     backgroundColor: colors.DARK,
     height: 60,
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
   },
   image: {
-    flex: 1,
     width: 130,
-    height: 130,
+    height: 80,
     resizeMode: 'contain' 
   },
   grafica1: {
@@ -295,5 +403,8 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
       flex: 1,
-  }
+  },
+  menu: {
+    width: 50,
+  },
 });

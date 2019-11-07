@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "20492516112",
+    "firebase_url": "https://vendty-dashboard.firebaseio.com",
+    "project_id": "vendty-dashboard",
+    "storage_bucket": "vendty-dashboard.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:20492516112:android:05ae2e346397137d4b4395",
+        "android_client_info": {
+          "package_name": "com.dashboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "20492516112-lq74n9vint1ps7ldomdm6dvmdb79421v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD683Zma5rTmVTpyiE9xqENZ1YMSoldosc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "20492516112-lq74n9vint1ps7ldomdm6dvmdb79421v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

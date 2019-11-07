@@ -71,11 +71,11 @@ class PieChartWithCenteredLabels extends React.PureComponent {
                         fill={'white'}
                         textAnchor={'middle'}
                         alignmentBaseline={'middle'}
-                        fontSize={24}
+                        fontSize={20}
                         stroke={'black'}
-                        strokeWidth={0.2}
+                        strokeWidth={0.5}
                     >
-                        {Math.round10(data.percent)}
+                        {Math.round10(data.percent)}%
                     </Text>
                 )
             })
@@ -83,7 +83,7 @@ class PieChartWithCenteredLabels extends React.PureComponent {
 
         return (
             <PieChart
-              style={{ height: 180 }}
+              style={{ height: 150 }}
               valueAccessor={({ item }) => item.percent}
               data={data}
               spacing={0}

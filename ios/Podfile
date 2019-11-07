@@ -36,6 +36,12 @@ target 'dashboard' do
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
+  pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
+
+  pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
   target 'dashboardTests' do
     inherit! :search_paths
     # Pods for testing
