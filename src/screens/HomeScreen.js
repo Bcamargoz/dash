@@ -105,7 +105,7 @@ class HomeScreen extends React.Component {
       .android.setSmallIcon('ic_push2') 
       .android.setLargeIcon("ic_push")
       .android.setVibrate([1000, 1000])
-      .android.setBigText("Vnedty", "Informe de ventas listo", "Inde del " + moment().subtract(1, 'day').toString())
+      .android.setBigText("Vendty", "Informe de ventas listo", "Informe del " + moment().subtract(1, 'day').format("DD/MM/YYYY"))
       .android.setBadgeIconType(firebase.notifications.Android.BadgeIconType.None)
       .android.setDefaults([firebase.notifications.Android.Defaults.Vibrate]);
     return notification;
