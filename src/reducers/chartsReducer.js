@@ -19,6 +19,7 @@ const preloadedState = {
     },
     warehouses: [],
     infoWarehouse: {},
+    salesHistory: []
 };
 
 export default (state = preloadedState, { type, payload }) => {
@@ -99,6 +100,11 @@ export default (state = preloadedState, { type, payload }) => {
                 ...state,
                 infoWarehouse: payload,
             };
+        case actions.GET_SALES_HISTORY:
+            return {
+                ...state,
+                salesHistory: payload,
+            }
         default:
             return state;
     }

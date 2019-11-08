@@ -4,6 +4,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import { connect } from 'react-redux';
 import Colors from '../../vars/colors';
+import { logout } from '../../actions/authActions';
 
 class SideMenu extends Component {
   constructor(props) {
@@ -14,21 +15,32 @@ class SideMenu extends Component {
     };
   }
 
-  renderItem = (name, icon, method) => {
+  renderItem = (name, icon, method, active = true) => {
     return (
       <TouchableHighlight onPress={method}>
         <View style={styles.containerItem}>
           <View style={styles.containerIcon}>
-            <Icon name={icon} color={"#fff"} size={25} />
+            <Icon name={icon} color={ active ? "#fff" : 'grey' } size={25} />
           </View>
-          <Text style={styles.textItem}>{name}</Text>
+          <Text style={{
+              textAlign: 'center',
+              color: active ? "#fff" : 'grey',
+            }}>
+            {name}
+          </Text>
         </View>
       </TouchableHighlight>
     );
   }
 
+  logout = () => {
+    const { navigation, logout } = this.props;
+    logout();
+    navigation.navigate('Auth')
+  }
+
   render() {
-    const { logout, renderItem } = this;
+    const { renderItem, logout } = this;
     const { navigation } = this.props;
     const { spinner } = this.state;
 
@@ -55,6 +67,8 @@ class SideMenu extends Component {
               }
             })
           })*/}
+          {renderItem('Usuarios', 'user-cog', () => {}, false)}
+          {renderItem('Licencias', 'user-cog', () => {}, false)}
           {renderItem('Cerrar Sesión', 'power-off', logout)}
         </ScrollView>
       </View>
@@ -66,7 +80,7 @@ const mapStateToProps = ({ network, token }) => {
   return { isConnected: network.isConnected, token }
 }
 
-export default connect(mapStateToProps)(SideMenu);
+export default connect(mapStateToProps, { logout })(SideMenu);
 
 const styles = {
   container: {

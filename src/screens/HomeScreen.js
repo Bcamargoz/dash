@@ -54,7 +54,8 @@ class HomeScreen extends React.Component {
       days: 7,
       enableNotification: true,
       isDateTimePickerVisible: false,
-      notificationTime: moment().add(1, 'minute')
+      //notificationTime: moment({ hour: 10 })
+      notificationTime: moment().add(10, 'seconds')
     }
   }
 
@@ -96,12 +97,17 @@ class HomeScreen extends React.Component {
     const notification = new firebase.notifications.Notification()
       .setNotificationId('1')
       .setTitle(title)
-      .setSubtitle("")
+      .setSubtitle("Vendty")
       .setBody('Tu informe diario de ventas esta listo!')
-      .android.setPriority(firebase.notifications.Android.Priority.High)
+      .android.setPriority(firebase.notifications.Android.Priority.Max)
       .android.setChannelId('reminder')
       .android.setAutoCancel(true)
-      .android.setSmallIcon('ic_push');
+      .android.setSmallIcon('ic_push2') 
+      .android.setLargeIcon("ic_push")
+      .android.setVibrate([1000, 1000])
+      .android.setBigText("Vnedty", "Informe de ventas listo", "Inde del " + moment().subtract(1, 'day').toString())
+      .android.setBadgeIconType(firebase.notifications.Android.BadgeIconType.None)
+      .android.setDefaults([firebase.notifications.Android.Defaults.Vibrate]);
     return notification;
   };
 

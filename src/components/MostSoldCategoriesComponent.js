@@ -37,15 +37,18 @@ class MostSoldCategoriesComponent extends React.PureComponent {
     render() {
 
         const { sales } = this.props;
+        const colors = [
+          "#517c8a","#4e9f86","#23ce6b","#56e39f","#87eba5"
+        ]
 
         const randomColor = () => ('#' + (Math.random() * 0xFFFFFF << 0).toString(16) + '000000').slice(0, 7)
         
         const pieData = sales
-        .filter(item => item.qty > 0)
+        .filter((item, index) => item.qty > 0 && index < 4)
         .map((value, index) => ({
             value: value.qty,
             svg: {
-                fill: randomColor(),
+                fill: colors[index],
                 onPress: () => console.log(value.category, value.percent),
             },
             key: `pie-${index}`,

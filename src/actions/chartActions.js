@@ -540,7 +540,45 @@ export const getWarehouse = data => async (dispatch) => {
     }
 };
 
+export const getSalesHistory = data => async (dispatch) => {
+    if (store.getState().network.isConnected) {
+        //await dispatch(showLoading());
 
+        await axios.pos(`https://pos.vendty.com/index.pho/job/ventas_diarias_app`, data)
+            .then(function ({ data, headers }) {
+                dispatch({
+                    type: actions.GET_SALES_HISTORY,
+                    payload: data
+                });
+            })
+            .catch(function (error) {
+                const { data, status } = error.response;
+                const type = 'danger';
+                let message = '';
+
+                if (status === 401 || status === 422) {
+                    message = (data.code === 'SUBSCRIPTION-EXPIRED')
+                        ? 'Su suscripción ha vencido. Por favor renuévela desde nuestro sitio web'
+                        : 'Correo electronico y/o contraseña incorrectas';
+                } else {
+                    message = 'Error al intentar iniciar sesión';
+                }
+
+                showMessage({
+                    message,
+                    type,
+                });
+            })
+            .finally(function () {
+                //dispatch(hideLoading());
+            });
+    } else {
+        showMessage({
+            message: 'No hay conexion a internet',
+            type: 'danger',
+        });
+    }
+};
 
 const logout = () => async (dispatch) => {
     dispatch(showLoading());

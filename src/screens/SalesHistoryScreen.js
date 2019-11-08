@@ -17,14 +17,7 @@ import colors from '../vars/colors';
 
 import { connect } from 'react-redux';
 import { 
-  getSalesXhour,
-  getLastSevenDays,
-  getWarehouse,
-  getWarehouses,
-  getMostSoldCategories,
-  getDishesSoldPerday,
-  getPaymentsMethodsOfday,
-  getInfoWarehouses
+    getSalesHistory
 } from '../actions/chartActions';
 import { getLoginData, logout } from '../actions/authActions';
 
@@ -57,8 +50,9 @@ class SalesHistoryScreen extends React.Component {
     const { getLoginData, getWarehouses } = this.props;
     getWarehouses();
     const data = await getLoginData();
-    console.log({ auth: data, warehouseSelected: data.warehouse.id });
-    this.setState({ auth: data, warehouseSelected: data.warehouse.id }, () => {this.loadData(data.warehouse.id)});
+    this.setState({ auth: data, warehouseSelected: data.warehouse.id }, () => {
+        this.loadData(data.warehouse.id, { email: data.user.email } )
+    });
   }
 
   onLogout = () => {
@@ -66,37 +60,21 @@ class SalesHistoryScreen extends React.Component {
     logout();
   }
 
-  loadData = (warehouseId) => {
+  loadData = (warehouseId, email) => {
     const {
-      getSalesXhour,
-      getLastSevenDays,
       getWarehouse,
-      getMostSoldCategories,
-      getDishesSoldPerday,
-      getPaymentsMethodsOfday,
-      getInfoWarehouses
+      getSalesHistory
     } = this.props;
     const { days } =  this.state;
-    getSalesXhour(warehouseId);
-    getLastSevenDays(warehouseId);
     getWarehouse(warehouseId);
-    getMostSoldCategories(warehouseId);
-    getDishesSoldPerday(warehouseId);
-    getPaymentsMethodsOfday(warehouseId);
-    getInfoWarehouses(warehouseId, days);
+    getSalesHistory(email)
   }
   
   render() {
     //this.loadData();
     const {
-      salesXhour,
-      salesLastSevenDays,
-      infoWarehouse,
       warehouses,
-      mostSoldCategories,
-      dishesXday,
-      paymentsMethodsOfday,
-      daySales
+      salesHistorys
     } = this.props;   
     
     const selectWarehouse = (warehouses) => {
@@ -229,28 +207,13 @@ class SalesHistoryScreen extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    salesXhour: state.chart.salesXhour,
-    salesLastSevenDays: state.chart.lastSevenDays,
-    infoWarehouse: state.chart.warehouse,
     warehouses: state.chart.warehouses,
-    mostSoldCategories: state.chart.mostSoldCategories,
-    dishesXday: state.chart.dishesSoldPerday,
-    paymentsMethodsOfday:  state.chart.paymentsMethodsOfday,
-    daySales: state.chart.infoWarehouse
+    salesHistory: state.chart.salesHistory
   }
 }
 
 export default connect(mapStateToProps, { 
-  logout,
-  getSalesXhour, 
-  getLoginData, 
-  getLastSevenDays, 
-  getWarehouse,
-  getWarehouses,
-  getMostSoldCategories,
-  getDishesSoldPerday,
-  getPaymentsMethodsOfday,
-  getInfoWarehouses
+    getSalesHistory
 })(SalesHistoryScreen);
 
 const styles = StyleSheet.create({

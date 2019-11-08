@@ -100,7 +100,7 @@ export default class PaymentMethodsDayComponent extends Component {
                                     /> }
                           </View>
                           <View style={{ width: '40%'}}>
-                            <Text style={{ fontSize: 18, fontFamily: "Nunito-Regular"  }}>{item.name}</Text>
+                            <Text style={{ fontSize: 18, color: 'grey', fontFamily: "Nunito-Regular"  }}>{item.name}</Text>
                           </View>
                           <View style={{ width: '40%' }}>
                             <NumberFormat value={Math.round10(item.total)} displayType={'text'} thousandSeparator={true} prefix={'$'} renderText={value => <Text style={{ fontSize: 18, textAlign: 'right', paddingRight: 10, fontFamily: "Nunito-Bold"  }}>{value}</Text>} />
@@ -118,7 +118,7 @@ export default class PaymentMethodsDayComponent extends Component {
                           <View style={{ width: '20%'}}>
                           </View>
                           <View style={{ width: '40%'}}>
-                            <Text style={{ fontSize: 18, fontFamily: "Nunito-Regular"  }}>Total: </Text>
+                            <Text style={{ fontSize: 18,color: 'grey', fontFamily: "Nunito-Regular"  }}>Total: </Text>
                           </View>
                           <View style={{ width: '40%'}}>
                             <NumberFormat value={Math.round10(sum)} displayType={'text'} thousandSeparator={true} prefix={'$'} renderText={value => <Text style={{ fontSize: 18, textAlign: 'right', paddingRight: 10, fontFamily: "Nunito-Bold" }}>{value}</Text>} />
@@ -149,7 +149,7 @@ export default class PaymentMethodsDayComponent extends Component {
                         /> }
               </View>
               <View style={{ width: '40%'}}>
-                <Text style={{ fontSize: 18, fontFamily: "Nunito-Regular" }}>{item.name}</Text>
+                <Text style={{ fontSize: 18, color: 'grey', fontFamily: "Nunito-Regular" }}>{item.name}</Text>
               </View>
               <View style={{ width: '40%'}}>
                 <NumberFormat value={Math.round10(item.total)} displayType={'text'} thousandSeparator={true} prefix={'$'} renderText={value => <Text style={{ fontSize: 18, textAlign: 'right', paddingRight: 10, fontFamily: "Nunito-Bold" }}>{value}</Text>} />
