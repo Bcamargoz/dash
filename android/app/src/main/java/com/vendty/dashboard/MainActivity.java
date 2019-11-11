@@ -1,4 +1,4 @@
-package com.dashboard;
+package com.vendty.dashboard;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

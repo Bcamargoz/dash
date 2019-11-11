@@ -22,7 +22,7 @@ export default class App extends React.Component {
     store.subscribe(() => {
       this.setState({ isLoading: store.getState().base.isLoading });
     });
-    //Orientation.lockToPortrait();
+    Orientation.lockToPortrait();
   }
 
   render() {

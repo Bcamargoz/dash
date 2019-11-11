@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AsyncStorage, Image, Linking, ScrollView, Text, TouchableHighlight, View } from 'react-native';
+import { Image, ScrollView, Text, TouchableHighlight, View } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import { connect } from 'react-redux';
@@ -25,17 +25,26 @@ class SideMenu extends Component {
           <Text style={{
               textAlign: 'center',
               color: active ? "#fff" : 'grey',
+              fontFamily: "Nunito-Regular"
             }}>
             {name}
           </Text>
+          {
+            !active ?
+            <View style={{ paddingRight: 5, paddingLeft: 5, backgroundColor: '#23a455', position: 'absolute', top: '10%', right: '20%', borderColor: '#23a455', borderWidth: 1 , borderRadius: 10}}> 
+              <Text style={{ color: 'white', fontSize: 9, fontFamily: "Nunito-Bold" }} >Proximamente</Text> 
+            </View>
+            : <></>
+          }
         </View>
       </TouchableHighlight>
     );
   }
 
   logout = () => {
-    const { navigation, logout } = this.props;
+    const { navigation, logout, intervalRequest } = this.props;
     logout();
+    clearInterval(intervalRequest);
     navigation.navigate('Auth')
   }
 
@@ -67,8 +76,8 @@ class SideMenu extends Component {
               }
             })
           })*/}
-          {renderItem('Usuarios', 'user-cog', () => {}, false)}
-          {renderItem('Licencias', 'user-cog', () => {}, false)}
+          {renderItem('Usuarios', 'users', () => {}, false)}
+          {renderItem('Licencias', 'id-badge', () => {}, false)}
           {renderItem('Cerrar Sesión', 'power-off', logout)}
         </ScrollView>
       </View>
@@ -76,8 +85,12 @@ class SideMenu extends Component {
   }
 }
 
-const mapStateToProps = ({ network, token }) => {
-  return { isConnected: network.isConnected, token }
+const mapStateToProps = (state) => {
+  return { 
+    isConnected: state.network.isConnected, 
+    token: state.token, 
+    intervalRequest: state.chart.intervalRequest
+  }
 }
 
 export default connect(mapStateToProps, { logout })(SideMenu);
@@ -97,16 +110,16 @@ const styles = {
     marginVertical: 10,
   },
   containerItems: {
-    backgroundColor: Colors.GREY1,
+    backgroundColor: Colors.GREY_DARK,
   },
   containerItem: {
     height: 50,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
+    padding: 5,
   },
   containerIcon: {
-    width: 30,
+    width: 35,
     marginRight: 20,
     marginLeft: 20,
   },

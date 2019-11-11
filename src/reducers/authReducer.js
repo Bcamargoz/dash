@@ -1,7 +1,7 @@
 // types
 import {
     LOGOUT,
-    LOGIN,
+    LOGIN
 } from '../actions/types';
 
 const preloadedState = {
@@ -16,7 +16,6 @@ export default (state = preloadedState, { payload, type }) => {
                 data: payload,
                 isAuthenticated: true
             };
-
         case LOGOUT:
             return preloadedState;
 

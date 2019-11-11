@@ -25,9 +25,10 @@ import {
   getMostSoldCategories,
   getDishesSoldPerday,
   getPaymentsMethodsOfday,
-  getInfoWarehouses
+  getInfoWarehouses,
+  setIntervalRequest
 } from '../actions/chartActions';
-import { getLoginData, logout } from '../actions/authActions';
+import { getLoginData, getLoginBetaData, logout } from '../actions/authActions';
 import SalesXHourComponent from '../components/SalesXHourComponent';
 import SalesLastSevenDaysComponent from '../components/SalesLastSevenDaysComponent';
 import InfoWarehouseComponent from '../components/InfoWarehouseComponent';
@@ -40,6 +41,7 @@ import firebase from "react-native-firebase";
 import moment from 'moment';
 
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
+import GoalComponent from '../components/GoalComponent';
 
 class HomeScreen extends React.Component {
 
@@ -54,8 +56,8 @@ class HomeScreen extends React.Component {
       days: 7,
       enableNotification: true,
       isDateTimePickerVisible: false,
-      //notificationTime: moment({ hour: 10 })
-      notificationTime: moment().add(10, 'seconds')
+      //notificationTime: moment({ hour: 8 })
+      notificationTime: moment({ hour: 7 })
     }
   }
 
@@ -95,7 +97,7 @@ class HomeScreen extends React.Component {
   buildNotification = () => {
     const title = Platform.OS === 'android' ? 'Informe Diario' : '';
     const notification = new firebase.notifications.Notification()
-      .setNotificationId('1')
+      .setNotificationId(Math.random().toString())
       .setTitle(title)
       .setSubtitle("Vendty")
       .setBody('Tu informe diario de ventas esta listo!')
@@ -106,7 +108,7 @@ class HomeScreen extends React.Component {
       .android.setLargeIcon("ic_push")
       .android.setVibrate([1000, 1000])
       .android.setBigText("Vendty", "Informe de ventas listo", "Informe del " + moment().subtract(1, 'day').format("DD/MM/YYYY"))
-      .android.setBadgeIconType(firebase.notifications.Android.BadgeIconType.None)
+      .android.setBadgeIconType(firebase.notifications.Android.BadgeIconType.Large)
       .android.setDefaults([firebase.notifications.Android.Defaults.Vibrate]);
     return notification;
   };
@@ -143,11 +145,15 @@ class HomeScreen extends React.Component {
   };
 
   async init() {
-    const { getLoginData, getWarehouses } = this.props;
+    const { getLoginData, getWarehouses, getLoginBetaData, setIntervalRequest } = this.props;
     getWarehouses();
     const data = await getLoginData();
-    console.log({ auth: data, warehouseSelected: data.warehouse.id });
+    const dataBeta = await getLoginBetaData();
     this.setState({ auth: data, warehouseSelected: data.warehouse.id }, () => {this.loadData(data.warehouse.id)});
+    const interval = setInterval(() => {
+      this.loadData(this.state.warehouseSelected);
+    }, 60000)
+    setIntervalRequest(interval);
   }
 
   onLogout = () => {
@@ -165,12 +171,14 @@ class HomeScreen extends React.Component {
       getPaymentsMethodsOfday,
       getInfoWarehouses
     } = this.props;
-    const { days } =  this.state;
+    const { days, auth } =  this.state;
     getSalesXhour(warehouseId);
     getLastSevenDays(warehouseId);
     getWarehouse(warehouseId);
     getMostSoldCategories(warehouseId);
-    getDishesSoldPerday(warehouseId);
+    if(auth.type_business !== 'retail'){
+      getDishesSoldPerday(warehouseId);
+    }
     getPaymentsMethodsOfday(warehouseId);
     getInfoWarehouses(warehouseId, days);
   }
@@ -198,6 +206,8 @@ class HomeScreen extends React.Component {
       paymentsMethodsOfday,
       daySales
     } = this.props;    
+
+    const { auth } = this.state;
 
     const selectWarehouse = (warehouses) => {
       if(warehouses.length > 1) {
@@ -272,7 +282,9 @@ class HomeScreen extends React.Component {
             {/** Grafica ventas por hora */}
 
             {/** Grafica ventas por hora */}
-            <DishesXHourComponent sales={dishesXday}></DishesXHourComponent>
+            {
+              auth.type_business !== 'retail' ? <DishesXHourComponent sales={dishesXday ? dishesXday : []}></DishesXHourComponent> : <View></View>
+            }
             {/** Grafica ventas por hora */}
 
             {/** Grafica categorias mas vendidas */}
@@ -282,6 +294,10 @@ class HomeScreen extends React.Component {
             {/** Grafica metodos de pago */}
             <PaymentMethodsDayComponent sales={paymentsMethodsOfday}></PaymentMethodsDayComponent>
             {/** Grafica metodos de pago */}
+
+            {/** Grafica de meta diaria */}
+            <GoalComponent warehouse={infoWarehouse}></GoalComponent>
+            {/** Grafica de meta diaria */}
 
             {/** Almacen */}
             <View style={styles.containerButton}>
@@ -303,8 +319,6 @@ class HomeScreen extends React.Component {
             </View>
             <DaysSalesComponent info={daySales}></DaysSalesComponent>
             {/** Almacen */}
-
-
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -329,14 +343,16 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, { 
   logout,
   getSalesXhour, 
-  getLoginData, 
+  getLoginData,
+  getLoginBetaData,
   getLastSevenDays, 
   getWarehouse,
   getWarehouses,
   getMostSoldCategories,
   getDishesSoldPerday,
   getPaymentsMethodsOfday,
-  getInfoWarehouses
+  getInfoWarehouses,
+  setIntervalRequest
 })(HomeScreen);
 
 const styles = StyleSheet.create({

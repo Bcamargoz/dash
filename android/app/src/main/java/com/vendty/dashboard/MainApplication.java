@@ -1,4 +1,4 @@
-package com.dashboard;
+package com.vendty.dashboard;
 
 import android.app.Application;
 import android.content.Context;

@@ -6,7 +6,7 @@ import MixpanelService from '../services/MixpanelService';
 import RouterService from '../services/RouterService';
 import store from '../store';
 import config from '../vars/config';
-import { getHeaders } from '../actions/baseActions';
+import { getHeaders, getHeadersBeta } from '../actions/baseActions';
 
 const clearStorage = async () => {
     await AsyncStorage.clear();
@@ -64,7 +64,7 @@ export const getSalesXhour = data => async (dispatch) => {
 
             })
             .catch(function (error) {
-                console.warn(error);
+                console.warn('Salesx hour', error);
                 const { data, status } = error.response;
                 const type = 'danger';
                 let message = '';
@@ -108,7 +108,7 @@ export const getWarehouses = data => async (dispatch) => {
 
             })
             .catch(function (error) {
-                console.warn(error);
+                console.warn('Get warehouses', error);
                 const { data, status } = error.response;
                 const type = 'danger';
                 let message = '';
@@ -152,7 +152,7 @@ export const getInfoWarehouses = (data, day = 7) => async (dispatch) => {
 
             })
             .catch(function (error) {
-                console.warn(error);
+                console.warn('InfoWarehouse', error);
                 const { data, status } = error.response;
                 const type = 'danger';
                 let message = '';
@@ -544,7 +544,9 @@ export const getSalesHistory = data => async (dispatch) => {
     if (store.getState().network.isConnected) {
         //await dispatch(showLoading());
 
-        await axios.pos(`https://pos.vendty.com/index.pho/job/ventas_diarias_app`, data)
+        await axios.post(`${config.BASE_BETA_URL}/saleshistory`, data , {
+                headers: await getHeadersBeta(),
+            })
             .then(function ({ data, headers }) {
                 dispatch({
                     type: actions.GET_SALES_HISTORY,
@@ -580,73 +582,9 @@ export const getSalesHistory = data => async (dispatch) => {
     }
 };
 
-const logout = () => async (dispatch) => {
-    dispatch(showLoading());
-
-    clearStorage();
-
+export const setIntervalRequest = data => async (dispatch) => {
     dispatch({
-        type: LOGOUT,
-    });
-
-    dispatch(hideLoading());
+        type: "SET_INTERVAL",
+        payload: data
+    })
 };
-
-const setLogin = async (data) => {
-    try {
-        await AsyncStorage.setItem(`${config.KEY_STORAGE}login`, JSON.stringify(data));
-    } catch (e) {
-        //
-    }
-}
-
-const validateLicense = (expired_at, date) => {
-    date = date ? new Date(date) : new Date(Date.now());
-    expired_at = new Date(expired_at);
-
-    const differenceInTime = expired_at.getTime() - date.getTime();
-    const days = Math.floor(differenceInTime / (1000 * 3600 * 24));
-    let license = true;
-    let message;
-    let type = 'warning';
-
-    if (days < 0) {
-        license = false;
-        message = 'Su suscripción ha vencido. Por favor renuévela desde nuestro sitio web';
-        type = 'danger';
-    } else if (days === 0) {
-        message = 'Su licencia vencera mañana';
-    } else if (days === 1) {
-        message = 'Su licencia vencera en 1 dia';
-    } else if (days < 8) {
-        message = `Su licencia vencera en ${days} dias`;
-    }
-
-    if (message) {
-        showMessage({
-            message,
-            type,
-        });
-    }
-
-    return license;
-}
-
-const validateLogin = (data, date) => async (dispatch) => {
-    const { license } = data;
-
-    if (validateLicense(license.expired_at, date)) {
-        setLogin(data);
-
-        dispatch({
-            type: LOGIN,
-            payload: data
-        });
-
-        MixpanelService.track('Login');
-
-        RouterService.navigate('Home');
-    } else {
-        clearStorage();
-    }
-}

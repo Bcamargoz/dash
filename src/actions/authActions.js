@@ -39,6 +39,15 @@ export const getLoginData = () => async (dispatch) => {
     }
 }
 
+export const getLoginBetaData = () => async (dispatch) => {
+    try {
+        let data = await AsyncStorage.getItem(`${config.KEY_STORAGE}loginBeta`);
+        return JSON.parse(data);
+    } catch (e) {
+        //
+    }
+}
+
 export const login = data => async (dispatch) => {
     if (store.getState().network.isConnected) {
         await dispatch(showLoading());
@@ -67,6 +76,27 @@ export const login = data => async (dispatch) => {
             })
             .finally(function () {
                 dispatch(hideLoading());
+            });
+    } else {
+        showMessage({
+            message: 'No hay conexion a internet',
+            type: 'danger',
+        });
+    }
+};
+
+export const loginBeta = data => async (dispatch) => {
+    if (store.getState().network.isConnected) {
+        //await dispatch(showLoading());
+        await axios.post(`${config.BASE_BETA_URL}/login`, data)
+            .then(async function ({ data, headers }) {
+                await AsyncStorage.setItem(`${config.KEY_STORAGE}loginBeta`, JSON.stringify(data));
+            })
+            .catch(function (error) {
+               console.warn('error aqui',error)
+            })
+            .finally(function () {
+                //dispatch(hideLoading());
             });
     } else {
         showMessage({

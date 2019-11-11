@@ -16,7 +16,7 @@ export default class CardViewComponent extends Component {
   
 
   render() {
-      const { component, titulo } = this.props;
+    const { component, titulo, icon = true } = this.props;
 
     return (
       <SafeAreaView style={styles.safeAreaView}>
@@ -24,11 +24,18 @@ export default class CardViewComponent extends Component {
             <View style={styles.child}>
               <View style={styles.titleView}>
                 <Text style={styles.title}>{ titulo }</Text>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                  <TouchableOpacity>
-                    <Icon name='expand' size={18} color='grey' />
-                  </TouchableOpacity>
-                </View>
+                { icon ? (
+                  <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                    <TouchableOpacity>
+                      <Icon name='expand' size={18} color='grey' />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={{ width: 18, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                    <TouchableOpacity>
+                    </TouchableOpacity>
+                  </View>
+                ) }
               </View>
               { component() }
             </View>

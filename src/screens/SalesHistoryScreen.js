@@ -11,7 +11,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity
 } from 'react-native';
-
+import formatNumber from '../services/FormatNumber';
 import colors from '../vars/colors';
 
 
@@ -19,7 +19,7 @@ import { connect } from 'react-redux';
 import { 
     getSalesHistory
 } from '../actions/chartActions';
-import { getLoginData, logout } from '../actions/authActions';
+import { getLoginBetaData, logout } from '../actions/authActions';
 
 import moment from 'moment';
 
@@ -33,12 +33,8 @@ class SalesHistoryScreen extends React.Component {
     this.state = {
       app: 'dashboard',
       warehouseSelected: 0,
-      warehouseLoaded: 0,
-      auth: {},
+      warehouseId: 0,
       days: 7,
-      enableNotification: true,
-      isDateTimePickerVisible: false,
-      notificationTime: moment().add(1, 'minute')
     }
   }
 
@@ -47,11 +43,10 @@ class SalesHistoryScreen extends React.Component {
   }
 
   async init() {
-    const { getLoginData, getWarehouses } = this.props;
-    getWarehouses();
-    const data = await getLoginData();
+    const { getLoginBetaData } = this.props;
+    const data = await getLoginBetaData();
     this.setState({ auth: data, warehouseSelected: data.warehouse.id }, () => {
-        this.loadData(data.warehouse.id, { email: data.user.email } )
+      this.loadData(data.warehouse.id, { email: data.user.email } )
     });
   }
 
@@ -62,33 +57,56 @@ class SalesHistoryScreen extends React.Component {
 
   loadData = (warehouseId, email) => {
     const {
-      getWarehouse,
       getSalesHistory
     } = this.props;
     const { days } =  this.state;
-    getWarehouse(warehouseId);
     getSalesHistory(email)
   }
   
+
+  formatName = (name) => {
+    name = name.replace(/-/g, " ");
+    name = name.replace(/_/g, " ");
+    name = name.toUpperCase();
+    return name;
+  }
+
+  compare(a, b){
+    /**
+    count_productos
+    utilidad
+    precio_venta
+    */
+    const totalA = parseFloat(a.count_productos) * parseFloat(a.precio_venta);
+    const totalB = parseFloat(b.count_productos) * parseFloat(b.precio_venta);
+    if (totalA < totalB) return 1;
+    if (totalB < totalA) return -1;
+    return 0;
+  }
+
   render() {
     //this.loadData();
     const {
       warehouses,
-      salesHistorys
-    } = this.props;   
-    
+      salesHistory
+    } = this.props;
+
+    const { warehouseId } = this.state;
+    const reportData = salesHistory.filter(warehouse => warehouse.id_almacen == warehouseId);
+
     const selectWarehouse = (warehouses) => {
         if(warehouses.length > 1) {
           return (
           <View style={styles.select}>
             <Text style={{ fontSize: 14, color: 'grey', paddingTop: 10, fontFamily: "Nunito-Regular" }}>Selecciona un almacen:</Text>
             <Picker
-              selectedValue={this.state.warehouseSelected}
+              selectedValue={this.state.warehouseId}
               style={{ height: 50, fontFamily: "Nunito-Regular" }}
               mode={'dialog'}
-              onValueChange={(itemValue, itemIndex) =>
-                this.setState({warehouseSelected: itemValue},() => {this.loadData(this.state.warehouseSelected)})
-              }>
+              onValueChange={(itemValue) =>  {
+                this.setState({ warehouseId: itemValue })
+              }}
+              >
               {
                 warehouses.map(element => <Picker.Item label={element.name} value={element.id} key={element.id} /> )
               }
@@ -103,8 +121,6 @@ class SalesHistoryScreen extends React.Component {
         }
         
     }
-
-    //console.log(infoWarehouse);
 
     const { navigation } = this.props;
     return (
@@ -143,7 +159,7 @@ class SalesHistoryScreen extends React.Component {
                         <Text style={{ fontSize: 18 }}>Ventas diarias:</Text>
                     </View>
                     <View style={{}}>
-                        <Text style={{ fontSize: 24 }}>$ 0 </Text>
+                        { reportData[0] ? formatNumber(reportData[0].ventas_diarias,  reportData[0].simbolo, { fontSize: 20, textAlign: 'right'}) : formatNumber(0, null, { fontSize: 20, textAlign: 'right'}) }
                     </View>
                 </View>
             </View>
@@ -152,8 +168,8 @@ class SalesHistoryScreen extends React.Component {
                     <View style={{}}>
                         <Text style={{ fontSize: 18 }}>Total de gastos:</Text>
                     </View>
-                    <View style={{}}>
-                        <Text style={{ fontSize: 24 }}>$ 0 </Text>
+                    <View style={{ }}>
+                        { reportData[0] ? formatNumber(reportData[0].total_gastos,  reportData[0].simbolo, { fontSize: 20, textAlign: 'right'}) : formatNumber(0, null, { fontSize: 20, textAlign: 'right'}) }
                     </View>
                 </View>
             </View>
@@ -163,7 +179,7 @@ class SalesHistoryScreen extends React.Component {
                         <Text style={{ fontSize: 18 }}>Total de utilidad: </Text>
                     </View>
                     <View style={{}}>
-                        <Text style={{ fontSize: 24 }}>$ 0 </Text>
+                      { reportData[0] ? formatNumber(reportData[0].total_utilidad,  reportData[0].simbolo, { fontSize: 20, textAlign: 'right'}) : formatNumber(0, null, { fontSize: 20, textAlign: 'right'}) }
                     </View>
                 </View>
             </View>
@@ -173,7 +189,7 @@ class SalesHistoryScreen extends React.Component {
                         <Text style={{ fontSize: 18 }}>Devoluciones: </Text>
                     </View>
                     <View style={{}}>
-                        <Text style={{ fontSize: 24 }}>$ 0 </Text>
+                        { reportData[0] ? formatNumber(reportData[0].devoluciones,  reportData[0].simbolo, { fontSize: 20, textAlign: 'right'}) : formatNumber(0, null, { fontSize: 20, textAlign: 'right'}) }
                     </View>
                 </View>
             </View>
@@ -182,8 +198,25 @@ class SalesHistoryScreen extends React.Component {
                     <View style={{}}>
                         <Text style={{ fontSize: 18 }}>Formas de pago: </Text>
                     </View>
-                    <View style={{}}>
-                        <Text style={{ fontSize: 24 }}>$ 0 </Text>
+                    <View >
+                      {
+                        reportData[0] ? reportData[0].total_formas_pago.length > 0 ?
+                          reportData[0].total_formas_pago.map(venta => 
+                            <View style={{
+                                justifyContent: 'space-between',
+                                flex: 1,
+                                alignItems: 'center',
+                                flexDirection: 'row'                                
+                              }}
+                              key={venta.forma_pago}>
+                              <Text style={{ fontSize: 16, color: 'grey',  textAlign: 'left' }}>{this.formatName(venta.forma_pago)} </Text>
+                              { formatNumber(venta.total_venta,  reportData[0].simbolo, { fontSize: 20, textAlign: 'right'})}
+                            </View>
+                          ) :
+                          <Text style={{ fontSize: 20,  textAlign: 'right' }}>$ 0 </Text>
+                        : 
+                        <Text style={{ fontSize: 20,  textAlign: 'right' }}>$ 0 </Text>
+                      }
                     </View>
                 </View>
             </View>
@@ -193,7 +226,31 @@ class SalesHistoryScreen extends React.Component {
                         <Text style={{ fontSize: 18 }}>Productos mas vendidos: </Text>
                     </View>
                     <View style={{}}>
-                        <Text style={{ fontSize: 24 }}>$ 0 </Text>
+                      {
+                        /**
+                          imagen
+                          count_productos
+                          utilidad
+                          precio_venta
+                         */
+                        
+                        reportData[0] ? reportData[0].productos_mas_vendidos.length > 0 ?
+                          reportData[0].productos_mas_vendidos.sort(this.compare).map(producto => 
+                            <View style={{
+                                justifyContent: 'space-between',
+                                flex: 1,
+                                alignItems: 'center',
+                                flexDirection: 'row',
+                              }}
+                              key={producto.nombre}>
+                              <Text style={{ width: '50%', fontSize: 16, color: 'grey',  textAlign: 'left' }}>{producto.nombre.slice(0, 20)} </Text>
+                              { formatNumber((parseFloat(producto.count_productos) * parseFloat(producto.precio_venta)),  reportData[0].simbolo, { fontSize: 20, textAlign: 'right'})}
+                            </View>
+                          ) :
+                          <Text style={{ fontSize: 20,  textAlign: 'right' }}>$ 0 </Text>
+                        : 
+                        <Text style={{ fontSize: 20,  textAlign: 'right' }}>$ 0 </Text>
+                      }
                     </View>
                 </View>
             </View>
@@ -213,10 +270,16 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, { 
-    getSalesHistory
+    getSalesHistory,
+    getLoginBetaData
 })(SalesHistoryScreen);
 
 const styles = StyleSheet.create({
+  scrollView: {
+    // backgroundColor: colors.GREY_DARK,
+     minHeight: '100%',
+     backgroundColor: "#f1f3f6"
+   },
     container: {
         flex: 1,
         justifyContent: 'center',

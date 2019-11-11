@@ -19,7 +19,8 @@ const preloadedState = {
     },
     warehouses: [],
     infoWarehouse: {},
-    salesHistory: []
+    salesHistory: [],
+    intervalRequest: {}
 };
 
 export default (state = preloadedState, { type, payload }) => {
@@ -104,6 +105,12 @@ export default (state = preloadedState, { type, payload }) => {
             return {
                 ...state,
                 salesHistory: payload,
+            }
+        case "SET_INTERVAL" :
+            clearInterval(state.intervalRequest);
+            return {
+                ...state,
+                intervalRequest: payload
             }
         default:
             return state;

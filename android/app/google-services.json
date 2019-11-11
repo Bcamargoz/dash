@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "20492516112",
-    "firebase_url": "https://vendty-dashboard.firebaseio.com",
-    "project_id": "vendty-dashboard",
-    "storage_bucket": "vendty-dashboard.appspot.com"
+    "project_number": "88358189343",
+    "firebase_url": "https://vendty-dashboard-72901.firebaseio.com",
+    "project_id": "vendty-dashboard-72901",
+    "storage_bucket": "vendty-dashboard-72901.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:20492516112:android:05ae2e346397137d4b4395",
+        "mobilesdk_app_id": "1:88358189343:android:a29d4b4e99e494beded82a",
         "android_client_info": {
-          "package_name": "com.dashboard"
+          "package_name": "com.vendty.dashboard"
         }
       },
       "oauth_client": [
         {
-          "client_id": "20492516112-lq74n9vint1ps7ldomdm6dvmdb79421v.apps.googleusercontent.com",
+          "client_id": "88358189343-uu0mn25pqo52pcvt1oj9v68bqhni4fiq.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD683Zma5rTmVTpyiE9xqENZ1YMSoldosc"
+          "current_key": "AIzaSyBSZTYNTp8k0_jqyOoJ1o9S-3mGVVdWER8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "20492516112-lq74n9vint1ps7ldomdm6dvmdb79421v.apps.googleusercontent.com",
+              "client_id": "88358189343-uu0mn25pqo52pcvt1oj9v68bqhni4fiq.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

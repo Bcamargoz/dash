@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { getLogin, login } from '../actions/authActions';
+import { getLogin, login, loginBeta } from '../actions/authActions';
 import colors from '../vars/colors';
 
 const LOGO = require('../assets/logo.png');
@@ -34,9 +34,10 @@ class LoginScreen extends Component {
   }
 
   onSubmit = () => {
-    const { login } = this.props;
+    const { login, loginBeta } = this.props;
 
     login(this.state);
+    loginBeta(this.state);
   }
 
   render() {
@@ -101,7 +102,7 @@ class LoginScreen extends Component {
   }
 };
 
-export default connect(null, { getLogin, login })(LoginScreen);
+export default connect(null, { getLogin, login, loginBeta })(LoginScreen);
 
 const styles = StyleSheet.create({
   container: {

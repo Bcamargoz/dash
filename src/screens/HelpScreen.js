@@ -6,31 +6,19 @@ import {
   View,
   Text,
   Image,
-  Picker,
-  Button,
-  TouchableWithoutFeedback,
+  Modal,
+  Linking,
   TouchableOpacity
 } from 'react-native';
 
+import { WebView } from 'react-native-webview';
 import colors from '../vars/colors';
 
-
-import { connect } from 'react-redux';
-import { 
-  getSalesXhour,
-  getLastSevenDays,
-  getWarehouse,
-  getWarehouses,
-  getMostSoldCategories,
-  getDishesSoldPerday,
-  getPaymentsMethodsOfday,
-  getInfoWarehouses
-} from '../actions/chartActions';
-import { getLoginData, logout } from '../actions/authActions';
 
 import moment from 'moment';
 
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
+import CardViewComponent from '../components/CardViewComponent';
 
 class HelpScreen extends React.Component {
 
@@ -39,106 +27,35 @@ class HelpScreen extends React.Component {
 
     this.state = {
       app: 'dashboard',
-      warehouseSelected: 0,
-      warehouseLoaded: 0,
-      auth: {},
-      days: 7,
-      enableNotification: true,
-      isDateTimePickerVisible: false,
-      notificationTime: moment().add(1, 'minute')
+      modalVisible: false,
+      titulo_modal: ""
     }
+  }
+
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
   }
 
   componentDidMount() {
-    this.init();
+    
   }
 
-  async init() {
-    const { getLoginData, getWarehouses } = this.props;
-    getWarehouses();
-    const data = await getLoginData();
-    console.log({ auth: data, warehouseSelected: data.warehouse.id });
-    this.setState({ auth: data, warehouseSelected: data.warehouse.id }, () => {this.loadData(data.warehouse.id)});
-  }
+  dialCall = (number) => {
+    let phoneNumber = '';
+ 
+    if (Platform.OS === 'android') {
+      phoneNumber = "tel:${"+number+"}";
+    }
+    else {
+      phoneNumber = "telprompt:${"+number+"}";
+    }
+ 
+    Linking.openURL(phoneNumber);
+  };
 
-  onLogout = () => {
-    const { logout } = this.props;
-    logout();
-  }
-
-  loadData = (warehouseId) => {
-    const {
-      getSalesXhour,
-      getLastSevenDays,
-      getWarehouse,
-      getMostSoldCategories,
-      getDishesSoldPerday,
-      getPaymentsMethodsOfday,
-      getInfoWarehouses
-    } = this.props;
-    const { days } =  this.state;
-    getSalesXhour(warehouseId);
-    getLastSevenDays(warehouseId);
-    getWarehouse(warehouseId);
-    getMostSoldCategories(warehouseId);
-    getDishesSoldPerday(warehouseId);
-    getPaymentsMethodsOfday(warehouseId);
-    getInfoWarehouses(warehouseId, days);
-  }
-
-  setDays = (days) => {
-    const {
-      getInfoWarehouses
-    } = this.props;
-    const { warehouseSelected } = this.state;
-    this.setState({
-      days: days
-    });
-    getInfoWarehouses(warehouseSelected, days);
-  }
   
   render() {
-    //this.loadData();
-    const {
-      salesXhour,
-      salesLastSevenDays,
-      infoWarehouse,
-      warehouses,
-      mostSoldCategories,
-      dishesXday,
-      paymentsMethodsOfday,
-      daySales
-    } = this.props;    
 
-    const selectWarehouse = (warehouses) => {
-      if(warehouses.length > 1) {
-        return (
-        <View style={styles.select}>
-          <Text style={{ fontSize: 14, color: 'grey', paddingTop: 10, fontFamily: "Montserrat-Regular" }}>Selecciona un almacen:</Text>
-          <Picker
-            selectedValue={this.state.warehouseSelected}
-            style={{ height: 50 }}
-            mode={'dialog'}
-            onValueChange={(itemValue, itemIndex) =>
-              this.setState({warehouseSelected: itemValue},() => {this.loadData(this.state.warehouseSelected)})
-            }>
-            {
-              warehouses.map(element => <Picker.Item label={element.name} value={element.id} key={element.id} /> )
-            }
-          </Picker>
-        </View>
-        )
-      } else {
-        return <View>
-            <Text>Información de tu almacen</Text>
-            <Text>{ !warehouses[0] ? '' : warehouses[0].name }</Text>
-          </View>
-      }
-      
-    }
-    //console.log(infoWarehouse);
-
-    const {days, notificationTime} = this.state;
     const { navigation } = this.props;
     return (
       <>
@@ -167,8 +84,110 @@ class HelpScreen extends React.Component {
           
           <View style={styles.body}>
 
-            <Text>Soporte</Text>
+            <View style={{  padding: 20, justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={{fontSize: 20}}>Canales de soporte</Text>
+            </View>
 
+            <CardViewComponent titulo={"Teléfonos de Soporte"} component={() => (
+              <View style={{ flexDirection: 'column', alignItems: "center", justifyContent: "center" }}>
+
+                <View style={{ flexDirection: 'row', alignItems: "center", justifyContent: "center" }}>
+                  <Icon name='phone' size={20} color='grey' />
+                  <TouchableOpacity onPress={() => this.dialCall("+573194751398") }>
+                    <Text style={{ fontFamily: "Nunito-Regular", padding: 10 }}>+(57) 3194751398</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={{ flexDirection: 'row', alignItems: "center", justifyContent: "center" }}>
+                  <Icon name='phone' size={20} color='grey' />
+                  <TouchableOpacity onPress={() => this.dialCall("+5716367799") }>
+                    <Text style={{ fontFamily: "Nunito-Regular", padding: 10 }}>+(57)1 6367799</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={{ flexDirection: 'row', alignItems: "center", justifyContent: "center" }}>
+                  <Icon name='phone' size={20} color='grey' />
+                  <TouchableOpacity onPress={() => this.dialCall("+5719262045") }>
+                    <Text style={{ fontFamily: "Nunito-Regular", padding: 10 }}>+(57)1 9262045</Text>
+                  </TouchableOpacity>
+                </View>
+
+              </View>
+            )} icon={false}>
+            </CardViewComponent>
+
+            <CardViewComponent titulo={"Generar un ticket de Soporte"} component={() => (
+              <View style={{padding: 20, flexDirection: 'column', alignItems: "center", justifyContent: "center" }}>
+                <TouchableOpacity onPress={() => {
+                    const url = 'https://vendtycom.freshdesk.com/support/tickets/new';
+
+                    /*Linking.canOpenURL(url).then(supported => {
+                      if (supported) {
+                        Linking.openURL(url);
+                      }
+                    });*/
+                    this.setState({
+                      url,
+                      titulo_modal: "Generar un ticket de Soporte"
+                    }, () => this.setModalVisible(true))
+
+                  }}>
+                  <Icon name='envelope' size={50} color='grey' />
+                </TouchableOpacity>
+              </View>
+            )} icon={false}>
+            </CardViewComponent>
+
+            <CardViewComponent titulo={"Ayuda en Linea"} component={() => (
+              <View style={{ padding: 20, flexDirection: 'column', alignItems: "center", justifyContent: "center" }}>
+                <TouchableOpacity onPress={() => {
+                    const url = 'https://ayuda.vendty.com/es/';
+
+                    /*Linking.canOpenURL(url).then(supported => {
+                      if (supported) {
+                        Linking.openURL(url);
+                      }
+                    });*/
+                    this.setState({
+                      url,
+                      titulo_modal: "Ayuda en Linea"
+                    }, () => this.setModalVisible(true))
+
+                  }}>
+                  <Icon name='question-circle' size={55} color='grey' />
+                </TouchableOpacity>
+              </View>
+            )} icon={false}>
+            </CardViewComponent>
+            
+            <Modal
+              animationType="slide"
+              transparent={false}
+              visible={this.state.modalVisible}
+              onRequestClose={() => {}}>
+              <View style={{marginTop: 20}}>
+                <View>
+                  <View style={{ paddingBottom: 20,justifyContent: "center", alignItems: "center"}}>
+                    <View style={{position: 'absolute', left: 10, top: 0 }}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          this.setModalVisible(!this.state.modalVisible);
+                        }}>
+                        <Icon name='arrow-left' size={20} color='#000' />
+                      </TouchableOpacity>
+                    </View>
+                    <Text style={{fontFamily: "Nunito-Bold"}}>{ this.state.titulo_modal}</Text>
+                  </View>
+                  <View style={{ marginBottom: 50, height: '100%', width: '100%', backgroundColor: 'lightgrey' }}>
+                    <WebView
+                      source={{uri: this.state.url}}
+                      javaScriptEnabled={true}
+                      domStorageEnabled={true}
+                    />
+                  </View>
+                </View>
+              </View>
+            </Modal>
 
           </View>
         </ScrollView>
@@ -178,43 +197,24 @@ class HelpScreen extends React.Component {
   }
 };
 
-function mapStateToProps(state) {
-  return {
-    salesXhour: state.chart.salesXhour,
-    salesLastSevenDays: state.chart.lastSevenDays,
-    infoWarehouse: state.chart.warehouse,
-    warehouses: state.chart.warehouses,
-    mostSoldCategories: state.chart.mostSoldCategories,
-    dishesXday: state.chart.dishesSoldPerday,
-    paymentsMethodsOfday:  state.chart.paymentsMethodsOfday,
-    daySales: state.chart.infoWarehouse
-  }
-}
-
-export default connect(mapStateToProps, { 
-  logout,
-  getSalesXhour, 
-  getLoginData, 
-  getLastSevenDays, 
-  getWarehouse,
-  getWarehouses,
-  getMostSoldCategories,
-  getDishesSoldPerday,
-  getPaymentsMethodsOfday,
-  getInfoWarehouses
-})(HelpScreen);
+export default HelpScreen;
 
 const styles = StyleSheet.create({
   scrollView: {
    // backgroundColor: colors.GREY_DARK,
-    minHeight: '100%'
+    minHeight: '100%',
+    backgroundColor: "#f1f3f6"
   },
   select: {
     paddingLeft: 10,
     paddingRight: 10
   },
   body: {
-    paddingBottom: 20  
+    paddingBottom: 20 ,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    flexDirection: 'column'
   },
   statusBar: {
     backgroundColor: colors.DARK,

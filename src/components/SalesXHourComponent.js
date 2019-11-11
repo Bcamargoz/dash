@@ -7,6 +7,7 @@ import * as dateFns from 'date-fns'
 import { Path } from 'react-native-svg'
 import colors from '../vars/colors'
 import CardViewComponent from './CardViewComponent'
+import { ScrollView } from 'react-native-gesture-handler'
 
 class SalesXHourComponent extends React.PureComponent {
 
@@ -17,6 +18,8 @@ class SalesXHourComponent extends React.PureComponent {
         let data2 = [];
         let labels2 = [];
         let labels1 = [];
+        let dataTotal = [];
+        let labelTotal = [];
 
         sales.map( (sale, index) => {
             if(index < 12) {
@@ -32,6 +35,11 @@ class SalesXHourComponent extends React.PureComponent {
                 })
                 labels2.push(sale.total)
             }
+            dataTotal.push({
+                value: sale.total,
+                date: dateFns.setHours(new Date(), index)
+            })
+            labelTotal.push(sale.total)
         });
 
         const axesSvg = { fontSize: 10, fill: 'black' };
@@ -46,46 +54,48 @@ class SalesXHourComponent extends React.PureComponent {
         )
 
         const chart2 = () => (
-            <View style={{ height: 200, width: '95%', padding: 10, flexDirection: 'row' }}>
-                <YAxis
-                    data={labels2}
-                    style={{ marginBottom: 10 }}
-                    contentInset={{ top: 3, bottom: 20 }}
-                    svg={axesSvg}
-                    numberOfTicks={5}
-                />
-
-                <View style={{ flex: 1, marginLeft: 10 }}>
-                    <AreaChart
-                        style={{ flex: 1 }}
-                        data={ data2 }
-                        yAccessor={ ({ item }) => item.value }
-                        xAccessor={ ({ item }) => item.date }
-                        xScale={ scale.scaleTime }
-                        contentInset={{ top: 0, bottom: 10 }}
-                        svg={{ fill: 'rgba(34, 164, 85, 0.5)' }}
-                        curve={ shape.curveMonotoneX }
+            <ScrollView horizontal={true} style={{}}>
+                <View style={{ height: 200, width: 800, padding: 10, flexDirection: 'row' }}>
+                    <YAxis
+                        data={labelTotal}
+                        style={{ marginBottom: 10 }}
+                        contentInset={{ top: 3, bottom: 20 }}
+                        svg={axesSvg}
                         numberOfTicks={5}
-                    >
-                        <Grid/> 
-                        <Line />
-                    </AreaChart>
-                    <XAxis
-                        data={ data2 }
-                        svg={{
-                            fill: 'black',
-                            fontSize: 10,
-                            fontWeight: 'bold',
-                            y: 5,
-                        }}
-                        xAccessor={ ({ item }) => item.date }
-                        scale={ scale.scaleTime }
-                        style={{ marginHorizontal: -15, height: 20 }}
-                        contentInset={{ left: 20, right: 25 }}
-                        formatLabel={ (value) => dateFns.format(value, 'HH') }
                     />
+
+                    <View style={{ flex: 1, marginLeft: 10 }}>
+                        <AreaChart
+                            style={{ flex: 1 }}
+                            data={ dataTotal }
+                            yAccessor={ ({ item }) => item.value }
+                            xAccessor={ ({ item }) => item.date }
+                            xScale={ scale.scaleTime }
+                            contentInset={{ top: 0, bottom: 10 }}
+                            svg={{ fill: 'rgba(34, 164, 85, 0.5)' }}
+                            curve={ shape.curveMonotoneX }
+                            numberOfTicks={5}
+                        >
+                            <Grid/> 
+                            <Line />
+                        </AreaChart>
+                        <XAxis
+                            data={ dataTotal }
+                            svg={{
+                                fill: 'black',
+                                fontSize: 10,
+                                fontWeight: 'bold',
+                                y: 5,
+                            }}
+                            xAccessor={ ({ item }) => item.date }
+                            scale={ scale.scaleTime }
+                            style={{ marginHorizontal: -15, height: 20 }}
+                            contentInset={{ left: 20, right: 25 }}
+                            formatLabel={ (value) => dateFns.format(value, 'HH') }
+                        />
+                    </View>
                 </View>
-            </View>
+            </ScrollView>
         );
 
         return (
