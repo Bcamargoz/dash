@@ -70,7 +70,7 @@ class MostSoldCategoriesComponent extends React.PureComponent {
 
         return (
             <>
-                <CardViewComponent titulo="Categorias mas vendidas" component={chart} ></CardViewComponent>
+                <CardViewComponent icon={false} titulo="Categorias mas vendidas" component={chart} ></CardViewComponent>
             </>
         )
     }

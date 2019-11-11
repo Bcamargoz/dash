@@ -76,7 +76,10 @@ class SalesXHourComponent extends React.PureComponent {
                             curve={ shape.curveMonotoneX }
                             numberOfTicks={5}
                         >
-                            <Grid/> 
+                            <Grid svg={{
+                                strokeWidth: 1,
+                                strokeOpacity: 0.3
+                            }}/> 
                             <Line />
                         </AreaChart>
                         <XAxis
@@ -100,7 +103,7 @@ class SalesXHourComponent extends React.PureComponent {
 
         return (
             <>
-                <CardViewComponent titulo="Ventas ultimas 12 horas" component={chart2} ></CardViewComponent>
+                <CardViewComponent  icon={false} titulo="Ventas ultimas 24 horas" component={chart2} ></CardViewComponent>
             </>
         )
     }

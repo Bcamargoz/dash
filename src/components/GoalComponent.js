@@ -48,7 +48,7 @@ class GoalComponent extends React.PureComponent {
 
         return (
             <>
-                <CardViewComponent titulo="Meta diaria" component={chart} ></CardViewComponent>
+                <CardViewComponent icon={false} titulo="Meta diaria" component={chart} ></CardViewComponent>
             </>
         )
     }

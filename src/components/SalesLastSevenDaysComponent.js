@@ -3,7 +3,6 @@ import { View, Text, ScrollView } from 'react-native';
 import { BarChart, XAxis, Grid } from 'react-native-svg-charts';
 import { Text as TextSvg } from 'react-native-svg';
 import CardViewComponent from './CardViewComponent';
-import NumberFormat from 'react-number-format';
 
 class SalesLastSevenDaysComponent extends React.PureComponent {
 
@@ -61,6 +60,10 @@ class SalesLastSevenDaysComponent extends React.PureComponent {
                     >
                         <Grid
                             direction={Grid.Direction.HORIZONTAL}
+                            svg={{
+                                strokeWidth: 1,
+                                strokeOpacity: 0.3
+                            }}
                         />
                         <Labels/>
                     </BarChart>
@@ -81,7 +84,7 @@ class SalesLastSevenDaysComponent extends React.PureComponent {
 
         return (
             <>
-                <CardViewComponent titulo="Ventas últimos 7 días" component={chart} ></CardViewComponent>
+                <CardViewComponent icon={false} titulo="Ventas últimos 7 días" component={chart} ></CardViewComponent>
             </>
         )
     }

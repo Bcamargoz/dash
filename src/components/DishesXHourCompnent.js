@@ -41,7 +41,10 @@ class DishesXHourComponent extends React.PureComponent {
                         gridMin={0}
                         numberOfTicks={5}
                     >
-                        <Grid direction={Grid.Direction.HORIZONTAL}/>
+                        <Grid svg={{
+                                strokeWidth: 1,
+                                strokeOpacity: 0.3
+                            }} direction={Grid.Direction.HORIZONTAL}/>
                         <Labels/>
                     </BarChart>
                     <XAxis
@@ -60,7 +63,7 @@ class DishesXHourComponent extends React.PureComponent {
 
         return (
             <>
-                <CardViewComponent titulo="Platos promedio por dias" component={chart} ></CardViewComponent>
+                <CardViewComponent icon={false} titulo="Platos promedio por dias" component={chart} ></CardViewComponent>
             </>
         )
     }

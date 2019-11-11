@@ -161,7 +161,7 @@ export default class PaymentMethodsDayComponent extends Component {
       }
 
     return (
-        <CardViewComponent titulo="Metodos de pago" component={renderData}></CardViewComponent>
+        <CardViewComponent icon={false} titulo="Metodos de pago" component={renderData}></CardViewComponent>
     );
   }
 }
