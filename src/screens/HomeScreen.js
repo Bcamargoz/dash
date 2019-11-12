@@ -216,7 +216,13 @@ class HomeScreen extends React.Component {
           <Text style={{ fontSize: 14, color: 'grey', paddingTop: 10, fontFamily: "Nunito-Regular" }}>Selecciona un almacen:</Text>
           <Picker
             selectedValue={this.state.warehouseSelected}
-            style={{ height: 50, fontFamily: "Nunito-Regular" }}
+            style={{ 
+              height: 50, 
+              fontFamily: "Nunito-Regular"
+            }}
+            itemStyle={{ 
+              fontFamily: "Nunito-Regular"
+             }}
             mode={'dialog'}
             onValueChange={(itemValue, itemIndex) =>
               this.setState({warehouseSelected: itemValue},() => {this.loadData(this.state.warehouseSelected)})
@@ -229,7 +235,7 @@ class HomeScreen extends React.Component {
         )
       } else {
         return <View>
-            <Text style={{ fontFamily: "Nunito-Regular" }}>Información de tu almacen</Text>
+            <Text style={{ fontFamily: "Nunito-Regular", fontSize: 20 }}>Información de tu almacen</Text>
             <Text style={{ fontFamily: "Nunito-Regular" }}>{ !warehouses[0] ? '' : warehouses[0].name }</Text>
           </View>
       }
@@ -362,8 +368,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f3f6'
   },
   select: {
-    paddingLeft: 10,
-    paddingRight: 10
+    paddingLeft: 5,
+    paddingRight: 5
   },
   body: {
     paddingBottom: 20,

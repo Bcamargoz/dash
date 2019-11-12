@@ -40,6 +40,7 @@ class SalesLastSevenDaysComponent extends React.PureComponent {
                     fill={ value >= CUT_OFF ? 'black' : 'black' }
                     alignmentBaseline={ 'middle' }
                     textAnchor={ 'middle' }
+                    fontFamily={"Nunito-Regular"}
                 >
                     {'$' + this.formatMoney(value, 0)}
                 </TextSvg>

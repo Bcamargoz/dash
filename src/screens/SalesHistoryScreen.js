@@ -35,6 +35,7 @@ class SalesHistoryScreen extends React.Component {
       warehouseSelected: 0,
       warehouseId: 0,
       days: 7,
+      selectDate: 1,
     }
   }
 
@@ -45,8 +46,8 @@ class SalesHistoryScreen extends React.Component {
   async init() {
     const { getLoginBetaData } = this.props;
     const data = await getLoginBetaData();
-    this.setState({ auth: data, warehouseSelected: data.warehouse.id }, () => {
-      this.loadData(data.warehouse.id, { email: data.user.email } )
+    this.setState({ auth: data, warehouseSelected: data.warehouse.id, email: data.user.email }, () => {
+      this.loadData(data.warehouse.id, { email: data.user.email, selectDate: this.state.selectDate } )
     });
   }
 
@@ -55,14 +56,21 @@ class SalesHistoryScreen extends React.Component {
     logout();
   }
 
-  loadData = (warehouseId, email) => {
+  loadData = (warehouseId, data) => {
     const {
       getSalesHistory
     } = this.props;
     const { days } =  this.state;
-    getSalesHistory(email)
+    getSalesHistory(data)
   }
-  
+
+  loadData2 = () => {
+    const { getSalesHistory } = this.props;
+    const { email, selectDate } =  this.state;
+    if(email && email !== "") {
+      getSalesHistory( { email, selectDate } )
+    }
+  }
 
   formatName = (name) => {
     name = name.replace(/-/g, " ");
@@ -84,6 +92,25 @@ class SalesHistoryScreen extends React.Component {
     return 0;
   }
 
+  slectDates = [
+    {
+      date: 1,
+      name: 'Ayer'
+    },
+    {
+      date: 7,
+      name: 'Ultimos 7 dias',
+    },
+    {
+      date: 14,
+      name: 'Ultimos 14 dias',
+    },
+    {
+      date: 30,
+      name: 'Ultimos 30 dias',
+    }
+  ]
+
   render() {
     //this.loadData();
     const {
@@ -104,7 +131,7 @@ class SalesHistoryScreen extends React.Component {
               style={{ height: 50, fontFamily: "Nunito-Regular" }}
               mode={'dialog'}
               onValueChange={(itemValue) =>  {
-                this.setState({ warehouseId: itemValue })
+                this.setState({ warehouseId: itemValue }, () => this.loadData2())
               }}
               >
               {
@@ -120,6 +147,26 @@ class SalesHistoryScreen extends React.Component {
             </View>
         }
         
+    }
+
+    const selectFecha = () => {
+        return (
+        <View style={styles.select}>
+          <Text style={{ fontSize: 14, color: 'grey', paddingTop: 10, fontFamily: "Nunito-Regular" }}>Selecciona fecha:</Text>
+          <Picker
+            selectedValue={this.state.selectDate}
+            style={{ height: 50, fontFamily: "Nunito-Regular" }}
+            mode={'dialog'}
+            onValueChange={(itemValue) =>  {
+              this.setState({ selectDate: itemValue }, () => this.loadData2())
+            }}
+            >
+            {
+              this.slectDates.map(element => <Picker.Item label={element.name} value={element.date} key={element.date} /> )
+            }
+          </Picker>
+        </View>
+        )
     }
 
     const { navigation } = this.props;
@@ -153,50 +200,88 @@ class SalesHistoryScreen extends React.Component {
             <View style={styles.select}>
               {selectWarehouse(warehouses)}
             </View>
+            <View style={styles.select}>
+              {selectFecha(warehouses)}
+            </View>
             <View style={styles.container}>
                 <View style={styles.child}>
                     <View style={{}}>
-                        <Text style={{ fontSize: 18 }}>Ventas diarias:</Text>
+                        <Text style={{ fontSize: 18, fontFamily: "Nunito-Regular" }}>Ventas diarias:</Text>
+                        <View
+                          style={{
+                            borderBottomColor: '#d6d7da',
+                            borderBottomWidth: 1,
+                            opacity: 0.5
+                          }}
+                        />
                     </View>
                     <View style={{}}>
-                        { reportData[0] ? formatNumber(reportData[0].ventas_diarias,  reportData[0].simbolo, { fontSize: 20, textAlign: 'right'}) : formatNumber(0, null, { fontSize: 20, textAlign: 'right'}) }
+                        { reportData[0] ? formatNumber(reportData[0].ventas_diarias,  reportData[0].simbolo, { fontFamily: "Nunito-Bold",fontSize: 20, textAlign: 'right'}) : formatNumber(0, null, { fontFamily: "Nunito-Bold", fontSize: 20, textAlign: 'right'}) }
                     </View>
                 </View>
             </View>
             <View style={styles.container}>
                 <View style={styles.child}>
                     <View style={{}}>
-                        <Text style={{ fontSize: 18 }}>Total de gastos:</Text>
+                        <Text style={{ fontSize: 18, fontFamily: "Nunito-Regular" }}>Total de gastos:</Text>
+                        <View
+                          style={{
+                            borderBottomColor: '#d6d7da',
+                            borderBottomWidth: 1,
+                            opacity: 0.5
+                          }}
+                        />
                     </View>
                     <View style={{ }}>
-                        { reportData[0] ? formatNumber(reportData[0].total_gastos,  reportData[0].simbolo, { fontSize: 20, textAlign: 'right'}) : formatNumber(0, null, { fontSize: 20, textAlign: 'right'}) }
+                        { reportData[0] ? formatNumber(reportData[0].total_gastos,  reportData[0].simbolo, { fontFamily: "Nunito-Bold",fontSize: 20, textAlign: 'right'}) : formatNumber(0, null, { fontFamily: "Nunito-Bold", fontSize: 20, textAlign: 'right'}) }
                     </View>
                 </View>
             </View>
             <View style={styles.container}>
                 <View style={styles.child}>
                     <View style={{}}>
-                        <Text style={{ fontSize: 18 }}>Total de utilidad: </Text>
+                        <Text style={{ fontSize: 18, fontFamily: "Nunito-Regular" }}>Total de utilidad: </Text>
+                        <View
+                          style={{
+                            borderBottomColor: '#d6d7da',
+                            borderBottomWidth: 1,
+                            opacity: 0.5
+                          }}
+                        />
                     </View>
                     <View style={{}}>
-                      { reportData[0] ? formatNumber(reportData[0].total_utilidad,  reportData[0].simbolo, { fontSize: 20, textAlign: 'right'}) : formatNumber(0, null, { fontSize: 20, textAlign: 'right'}) }
-                    </View>
-                </View>
-            </View>
-            <View style={styles.container}>
-                <View style={styles.child}>
-                    <View style={{}}>
-                        <Text style={{ fontSize: 18 }}>Devoluciones: </Text>
-                    </View>
-                    <View style={{}}>
-                        { reportData[0] ? formatNumber(reportData[0].devoluciones,  reportData[0].simbolo, { fontSize: 20, textAlign: 'right'}) : formatNumber(0, null, { fontSize: 20, textAlign: 'right'}) }
+                      { reportData[0] ? formatNumber(reportData[0].total_utilidad,  reportData[0].simbolo, { fontFamily: "Nunito-Bold",fontSize: 20, textAlign: 'right'}) : formatNumber(0, null, { fontFamily: "Nunito-Bold",fontSize: 20, textAlign: 'right'}) }
                     </View>
                 </View>
             </View>
             <View style={styles.container}>
                 <View style={styles.child}>
                     <View style={{}}>
-                        <Text style={{ fontSize: 18 }}>Formas de pago: </Text>
+                        <Text style={{ fontSize: 18, fontFamily: "Nunito-Regular" }}>Devoluciones: </Text>
+                        <View
+                          style={{
+                            borderBottomColor: '#d6d7da',
+                            borderBottomWidth: 1,
+                            opacity: 0.5
+                          }}
+                        />
+                    </View>
+                    <View style={{}}>
+                        { reportData[0] ? formatNumber(reportData[0].devoluciones,  reportData[0].simbolo, { fontFamily: "Nunito-Bold",fontSize: 20, textAlign: 'right'}) : formatNumber(0, null, { fontFamily: "Nunito-Bold",fontSize: 20, textAlign: 'right'}) }
+                    </View>
+                </View>
+            </View>
+            <View style={styles.container}>
+                <View style={styles.child}>
+                    <View style={{}}>
+                        <Text style={{ fontSize: 18, fontFamily: "Nunito-Regular" }}>Formas de pago: </Text>
+                        <View
+                          style={{
+                            borderBottomColor: '#d6d7da',
+                            borderBottomWidth: 1,
+                            opacity: 0.5
+                          }}
+                        />
                     </View>
                     <View >
                       {
@@ -210,12 +295,12 @@ class SalesHistoryScreen extends React.Component {
                               }}
                               key={venta.forma_pago}>
                               <Text style={{ fontSize: 16, color: 'grey',  textAlign: 'left' }}>{this.formatName(venta.forma_pago)} </Text>
-                              { formatNumber(venta.total_venta,  reportData[0].simbolo, { fontSize: 20, textAlign: 'right'})}
+                              { formatNumber(venta.total_venta,  reportData[0].simbolo, { fontFamily: "Nunito-Bold",fontSize: 20, textAlign: 'right'})}
                             </View>
                           ) :
-                          <Text style={{ fontSize: 20,  textAlign: 'right' }}>$ 0 </Text>
+                          <Text style={{ fontFamily: "Nunito-Bold",fontSize: 20,  textAlign: 'right' }}>$ 0 </Text>
                         : 
-                        <Text style={{ fontSize: 20,  textAlign: 'right' }}>$ 0 </Text>
+                        <Text style={{ fontFamily: "Nunito-Bold",fontSize: 20,  textAlign: 'right' }}>$ 0 </Text>
                       }
                     </View>
                 </View>
@@ -223,7 +308,14 @@ class SalesHistoryScreen extends React.Component {
             <View style={styles.container}>
                 <View style={styles.child}>
                     <View style={{}}>
-                        <Text style={{ fontSize: 18 }}>Productos mas vendidos: </Text>
+                        <Text style={{ fontSize: 18, fontFamily: "Nunito-Regular", opacity: 0.8 }}>Productos mas vendidos: </Text>
+                        <View
+                          style={{
+                            borderBottomColor: '#d6d7da',
+                            borderBottomWidth: 1,
+                            opacity: 0.5
+                          }}
+                        />
                     </View>
                     <View style={{}}>
                       {
@@ -244,12 +336,12 @@ class SalesHistoryScreen extends React.Component {
                               }}
                               key={producto.nombre}>
                               <Text style={{ width: '50%', fontSize: 16, color: 'grey',  textAlign: 'left' }}>{producto.nombre.slice(0, 20)} </Text>
-                              { formatNumber((parseFloat(producto.count_productos) * parseFloat(producto.precio_venta)),  reportData[0].simbolo, { fontSize: 20, textAlign: 'right'})}
+                              { formatNumber((parseFloat(producto.count_productos) * parseFloat(producto.precio_venta)),  reportData[0].simbolo, { fontFamily: "Nunito-Bold",fontSize: 20, textAlign: 'right'})}
                             </View>
                           ) :
-                          <Text style={{ fontSize: 20,  textAlign: 'right' }}>$ 0 </Text>
+                          <Text style={{ fontSize: 20,fontFamily: "Nunito-Bold",  textAlign: 'right' }}>$ 0 </Text>
                         : 
-                        <Text style={{ fontSize: 20,  textAlign: 'right' }}>$ 0 </Text>
+                        <Text style={{ fontSize: 20,fontFamily: "Nunito-Bold",  textAlign: 'right' }}>$ 0 </Text>
                       }
                     </View>
                 </View>

@@ -3,6 +3,7 @@ import { View, Text } from 'react-native'
 import { Circle, Svg } from 'react-native-svg';
 import CardViewComponent from './CardViewComponent';
 import PieChartWithCenteredLabels from './PercentPie';
+import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 class MostSoldCategoriesComponent extends React.PureComponent {
 
@@ -10,7 +11,7 @@ class MostSoldCategoriesComponent extends React.PureComponent {
 
         if (data.length === 0) {
           return (
-            <Text style={{ textAlign: 'center', padding: 10 }}>Data Empty</Text>
+            <></>
           );
         }
 
@@ -57,7 +58,16 @@ class MostSoldCategoriesComponent extends React.PureComponent {
         }));
 
         const chart = () => (
-            <View style={{  flex: 1, flexDirection: "row", paddingTop: 10 }}>
+          <>
+            { pieData.length <= 0 ? 
+              <>
+                <View style={{ justifyContent: 'center', alignItems: 'center', padding: 10}}>
+                  <Icon name='shopping-bag' size={40} color='grey' />
+                  <Text style={{ textAlign: 'center', fontFamily: 'Nunito-Regular', padding: 10 }}>  No hay ventas aun!</Text>
+                </View>
+              </>
+            : 
+              <View style={{  flex: 1, flexDirection: "row", paddingTop: 10 }}>
                 <View style={{ width: '40%', paddingLeft: '2%' }}>
                     { this.renderData(pieData) }
                 </View>
@@ -65,7 +75,10 @@ class MostSoldCategoriesComponent extends React.PureComponent {
                     <PieChartWithCenteredLabels sales={pieData} ></PieChartWithCenteredLabels>
                 </View>
                 
-            </View>
+              </View>
+          }
+            
+          </>
         )
 
         return (

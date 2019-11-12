@@ -1,6 +1,7 @@
 import React from 'react'
+import { View, Text } from 'react-native'
 import { PieChart } from 'react-native-svg-charts'
-import { Text } from 'react-native-svg'
+import { Text as TextSVG } from 'react-native-svg'
 
 class PieChartWithCenteredLabels extends React.PureComponent {
 
@@ -64,7 +65,7 @@ class PieChartWithCenteredLabels extends React.PureComponent {
             return slices.map((slice, index) => {
                 const { labelCentroid, pieCentroid, data } = slice;
                 return (
-                    <Text
+                    <TextSVG
                         key={index}
                         x={pieCentroid[ 0 ]}
                         y={pieCentroid[ 1 ]}
@@ -75,14 +76,16 @@ class PieChartWithCenteredLabels extends React.PureComponent {
                         fontFamily={"Nunito-Bold"}
                         stroke={'black'}
                         strokeWidth={0.5}
+                        fontFamily={"Nunito-Regular"}
                     >
                         {Math.round10(data.percent)}%
-                    </Text>
+                    </TextSVG>
                 )
             })
         }
 
         return (
+          <>
             <PieChart
               style={{ height: 150 }}
               valueAccessor={({ item }) => item.percent}
@@ -92,6 +95,7 @@ class PieChartWithCenteredLabels extends React.PureComponent {
             >
               <Labels/>
             </PieChart>
+          </>
         )
     }
 

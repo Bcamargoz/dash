@@ -8,6 +8,7 @@ import {
 import NumberFormat from 'react-number-format'
 
 import CardViewComponent from './CardViewComponent';
+import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 export default class PaymentMethodsDayComponent extends Component {
   constructor(props) {
@@ -70,7 +71,12 @@ export default class PaymentMethodsDayComponent extends Component {
        
         if (sales.length === 0) {
           return (
-            <Text style={{ textAlign: 'center', padding: 10 }}>Data Empty</Text>
+            <>
+              <View style={{ justifyContent: 'center', alignItems: 'center', padding: 10}}>
+                <Icon name='shopping-bag' size={40} color='grey' />
+                <Text style={{ textAlign: 'center', fontFamily: 'Nunito-Regular', padding: 10 }}>  No hay ventas aun!</Text>
+              </View>
+            </>
           );
         }
         return <View>

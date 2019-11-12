@@ -24,6 +24,7 @@ class DishesXHourComponent extends React.PureComponent {
                     fill={ value >= CUT_OFF ? 'black' : 'black' }
                     alignmentBaseline={ 'middle' }
                     textAnchor={ 'middle' }
+                    fontFamily={"Nunito-Regular"}
                 >
                     {value}
                 </TextSvg>

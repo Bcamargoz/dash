@@ -541,13 +541,15 @@ export const getWarehouse = data => async (dispatch) => {
 };
 
 export const getSalesHistory = data => async (dispatch) => {
+    console.warn(data);
     if (store.getState().network.isConnected) {
         //await dispatch(showLoading());
-
+console.warn('antes post');
         await axios.post(`${config.BASE_BETA_URL}/saleshistory`, data , {
                 headers: await getHeadersBeta(),
             })
             .then(function ({ data, headers }) {
+                console.warn(data);
                 dispatch({
                     type: actions.GET_SALES_HISTORY,
                     payload: data

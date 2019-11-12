@@ -89,6 +89,7 @@ class SalesXHourComponent extends React.PureComponent {
                                 fontSize: 10,
                                 fontWeight: 'bold',
                                 y: 5,
+                                fontFamily:"Nunito-Regular"
                             }}
                             xAccessor={ ({ item }) => item.date }
                             scale={ scale.scaleTime }
