@@ -31,8 +31,8 @@ class GoalComponent extends React.PureComponent {
                     { formatNumber(warehouse.daily_goal, null,{ paddingRight: 20, textAlign: 'right', fontFamily: "Nunito-Bold" }) }
                 </View>
                 <View style={{ flex: 1, flexDirection: 'row' }}>
-                    <Text style={{ paddingRight: 20, width: '25%', textAlign: 'right', fontFamily: "Nunito-Regular", color: 'grey' }}>Obtenido :</Text>
-                    { formatNumber(warehouse.amount, null,{ paddingRight: 20, textAlign: 'right', fontFamily: "Nunito-Bold" }) }
+                    <Text style={{ paddingRight: 20, width: '25%', textAlign: 'right', fontFamily: "Nunito-Regular", color: 'grey' }}>Faltan :</Text>
+                    { formatNumber((warehouse.daily_goal - warehouse.amount), null,{ paddingRight: 20, textAlign: 'right', fontFamily: "Nunito-Bold" }) }
                 </View>
                 <AnimatedCircularProgress
                     size={150}

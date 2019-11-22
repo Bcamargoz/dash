@@ -3,11 +3,12 @@ import { showMessage } from 'react-native-flash-message';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-community/async-storage';
 import { hideLoading, showLoading } from './baseActions';
-import { LOGIN, LOGOUT } from './types';
+import { LOGIN, LOGOUT, LOADING } from './types';
 import MixpanelService from '../services/MixpanelService';
 import RouterService from '../services/RouterService';
 import store from '../store';
 import config from '../vars/config';
+import firebase from "react-native-firebase";
 
 const clearStorage = async () => {
     await AsyncStorage.clear();
@@ -23,11 +24,14 @@ export const getLogin = () => async (dispatch) => {
         } else {
             await clearStorage();
         }
+
+        await dispatch({
+            type: LOADING,
+            payload: false
+        })
     } catch (e) {
         //
     }
-
-    SplashScreen.hide();
 }
 
 export const getLoginData = () => async (dispatch) => {
@@ -107,6 +111,11 @@ export const loginBeta = data => async (dispatch) => {
 };
 
 export const logout = () => async (dispatch) => {
+    dispatch({
+        type: LOADING,
+        payload: false
+    })
+
     dispatch(showLoading());
 
     clearStorage();
@@ -162,16 +171,19 @@ const validateLogin = (data, date) => async (dispatch) => {
     const { license } = data;
 
     if (validateLicense(license.expired_at, date)) {
-        setLogin(data);
-
+        await setLogin(data);
+        MixpanelService.track('Login');
+        const initial = await firebase.notifications().getInitialNotification();
         dispatch({
             type: LOGIN,
             payload: data
         });
-
-        MixpanelService.track('Login');
-
-        RouterService.navigate('Home');
+        
+        if(initial) {
+            RouterService.navigate('SalesHistory');
+        } else {
+            RouterService.navigate('Home');
+        }  
     } else {
         clearStorage();
     }

@@ -13,6 +13,8 @@ import { Input, Button } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { getLogin, login, loginBeta } from '../actions/authActions';
 import colors from '../vars/colors';
+import SplashScreen from './SplashScreen';
+
 
 const LOGO = require('../assets/logo.png');
 
@@ -28,8 +30,8 @@ class LoginScreen extends Component {
   }
 
   componentDidMount() {
-    const { getLogin } = this.props;
-
+    const { getLogin, navigation } = this.props;
+  
     getLogin();
   }
 
@@ -40,10 +42,9 @@ class LoginScreen extends Component {
     loginBeta(this.state);
   }
 
-  render() {
+  loginView = () => {
     const { email, password } = this.state;
     const disabled = (!email || !password);
-
     return (
       <SafeAreaView>
         <ScrollView contentContainerStyle={styles.container}>
@@ -100,9 +101,26 @@ class LoginScreen extends Component {
       </SafeAreaView>
     )
   }
+
+
+  render() {
+    const { loading } = this.props;
+    console.warn(loading);
+    return (
+      <>
+        { loading ? <SplashScreen></SplashScreen> : this.loginView() }
+      </>
+    )
+  }
 };
 
-export default connect(null, { getLogin, login, loginBeta })(LoginScreen);
+function mapStateToProps(state) {
+  return {
+    loading: state.auth.loading
+  }
+}
+
+export default connect(mapStateToProps, { getLogin, login, loginBeta })(LoginScreen);
 
 const styles = StyleSheet.create({
   container: {

@@ -7,13 +7,11 @@ import {
   Text,
   Image,
   Picker,
-  Button,
   TouchableWithoutFeedback,
   TouchableOpacity
 } from 'react-native';
-
+import AsyncStorage from '@react-native-community/async-storage';
 import colors from '../vars/colors';
-import { PieChart, ProgressCircle } from 'react-native-svg-charts';
 
 
 import { connect } from 'react-redux';
@@ -26,7 +24,11 @@ import {
   getDishesSoldPerday,
   getPaymentsMethodsOfday,
   getInfoWarehouses,
-  setIntervalRequest
+  setIntervalRequest,
+  getDeliveries,
+  getMostSelledProducts,
+  getAverageAtention
+
 } from '../actions/chartActions';
 import { getLoginData, getLoginBetaData, logout } from '../actions/authActions';
 import SalesXHourComponent from '../components/SalesXHourComponent';
@@ -36,6 +38,9 @@ import DishesXHourComponent from '../components/DishesXHourCompnent';
 import MostSoldCategoriesComponent from '../components/MostSoldCategoriesComponent';
 import PaymentMethodsDayComponent from '../components/PaymentMethodsDayComponent';
 import DaysSalesComponent from '../components/DaysSalesComponent';
+import DeliveriesComponent from '../components/DeliveriesComponent';
+import MostSelledProducstComponent from '../components/MostSelledProductsComponent';
+import AverageAttentionComponent from '../components/AverageAttentionComponent';
 
 import firebase from "react-native-firebase";
 import moment from 'moment';
@@ -56,8 +61,10 @@ class HomeScreen extends React.Component {
       days: 7,
       enableNotification: true,
       isDateTimePickerVisible: false,
-      //notificationTime: moment({ hour: 8 })
-      notificationTime: moment({ hour: 7 })
+      //notificationTime: moment().add(5, 'seconds'),
+      notificationTime: moment({ hour: 7 }),
+      data: { value: false }
+      
     }
   }
 
@@ -82,16 +89,23 @@ class HomeScreen extends React.Component {
 
   setReminder = async () => {
     const { notificationTime, enableNotification } = this.state;
-
-    if (enableNotification) {
-      firebase.notifications().scheduleNotification(this.buildNotification(), {
-        fireDate: notificationTime.valueOf(),
-        repeatInterval: 'day',
-        exact: true,
-      });
-    } else {
-      return false;
+    reminder = await AsyncStorage.getItem('reminder')
+    reminder = JSON.parse(reminder);
+    console.warn(reminder);
+    if(!reminder) {
+      console.warn('se registra la notificacion')
+      if (enableNotification) {
+        firebase.notifications().scheduleNotification(this.buildNotification(), {
+          fireDate: notificationTime.valueOf(),
+          repeatInterval: 'day',
+          exact: true,
+        });
+        AsyncStorage.setItem('reminder', JSON.stringify({ reminder: true}))
+      } else {
+        return false;
+      }
     }
+    
   };
 
   buildNotification = () => {
@@ -110,19 +124,64 @@ class HomeScreen extends React.Component {
       .android.setBigText("Vendty", "Informe de ventas listo", "Informe del " + moment().subtract(1, 'day').format("DD/MM/YYYY"))
       .android.setBadgeIconType(firebase.notifications.Android.BadgeIconType.Large)
       .android.setDefaults([firebase.notifications.Android.Defaults.Vibrate]);
+
+    firebase.notifications().onNotificationOpened((notificationOpen) => {
+      const { navigation } = this.props;
+      navigation.navigate('SalesHistory');
+    });
+
+    // Build an action
+    const action = new firebase.notifications.Android.Action('ver_informe', 'ic_push', 'Ver informe');
+    // Add the action to the notification
+    notification.android.addAction(action);
+
     return notification;
   };
 
-  createNotificationChannel = () => {
+  createNotificationChannel = async () => {
     // Build a android notification channel
     const channel = new firebase.notifications.Android.Channel(
       "reminder", // channelId
       "Reminders Channel", // channel name
-      firebase.notifications.Android.Importance.High // channel importance
+      firebase.notifications.Android.Importance.Max // channel importance
     ).setDescription("Used for getting reminder notification"); // channel description
     // Create the android notification channel
     firebase.notifications().android.createChannel(channel);
   };
+
+  notificate = async () => {
+    console.warn('aqui')
+    // Set up your listener
+    firebase.notifications().onNotificationOpened((notificationOpen) => {
+      AsyncStorage.setItem('first', JSON.stringify({ value:  true }));
+      const { navigation } = this.props;
+      navigation.navigate('SalesHistory');
+    });
+
+    // Build your notification
+    const title = Platform.OS === 'android' ? 'Informe Diario' : '';
+    const notification = new firebase.notifications.Notification()
+      .setNotificationId(Math.random().toString())
+      .setTitle(title)
+      .setSubtitle("Vendty")
+      .setBody('Tu informe diario de ventas esta listo!')
+      .android.setPriority(firebase.notifications.Android.Priority.Max)
+      .android.setChannelId('reminder')
+      .android.setAutoCancel(true)
+      .android.setSmallIcon('ic_push2') 
+      .android.setLargeIcon("ic_push")
+      .android.setVibrate([1000, 1000])
+      .android.setBigText("Vendty", "Informe de ventas listo", "Informe del " + moment().subtract(1, 'day').format("DD/MM/YYYY"))
+      .android.setBadgeIconType(firebase.notifications.Android.BadgeIconType.Large)
+      .android.setDefaults([firebase.notifications.Android.Defaults.Vibrate]);
+    // Build an action
+    const action = new firebase.notifications.Android.Action('test_action', 'ic', 'Ver informe');
+    // Add the action to the notification
+    notification.android.addAction(action);
+
+    // Display the notification
+    firebase.notifications().displayNotification(notification);
+  }
   
   checkPermission = async () => {
     const enabled = await firebase.messaging().hasPermission();
@@ -145,6 +204,7 @@ class HomeScreen extends React.Component {
   };
 
   async init() {
+    
     const { getLoginData, getWarehouses, getLoginBetaData, setIntervalRequest } = this.props;
     getWarehouses();
     const data = await getLoginData();
@@ -154,6 +214,10 @@ class HomeScreen extends React.Component {
       this.loadData(this.state.warehouseSelected);
     }, 60000)
     setIntervalRequest(interval);
+    let data2 = await AsyncStorage.getItem(`first`);
+    this.setState({
+      data: JSON.parse(data2)
+    })
   }
 
   onLogout = () => {
@@ -169,7 +233,10 @@ class HomeScreen extends React.Component {
       getMostSoldCategories,
       getDishesSoldPerday,
       getPaymentsMethodsOfday,
-      getInfoWarehouses
+      getInfoWarehouses,
+      getDeliveries,
+      getMostSelledProducts,
+      getAverageAtention
     } = this.props;
     const { days, auth } =  this.state;
     getSalesXhour(warehouseId);
@@ -181,6 +248,9 @@ class HomeScreen extends React.Component {
     }
     getPaymentsMethodsOfday(warehouseId);
     getInfoWarehouses(warehouseId, days);
+    getDeliveries(warehouseId);
+    getMostSelledProducts(warehouseId);
+    getAverageAtention(warehouseId);
   }
 
   setDays = (days) => {
@@ -204,7 +274,10 @@ class HomeScreen extends React.Component {
       mostSoldCategories,
       dishesXday,
       paymentsMethodsOfday,
-      daySales
+      daySales,
+      deliveries,
+      mostSelledProducts,
+      averageAtention
     } = this.props;    
 
     const { auth } = this.state;
@@ -243,7 +316,7 @@ class HomeScreen extends React.Component {
     }
     //console.log(infoWarehouse);
 
-    const {days, notificationTime} = this.state;
+    const {days, notificationTime, data} = this.state;
     const { navigation } = this.props;
     return (
       <>
@@ -289,13 +362,20 @@ class HomeScreen extends React.Component {
 
             {/** Grafica ventas por hora */}
             {
-              auth.type_business !== 'retail' ? <DishesXHourComponent sales={dishesXday ? dishesXday : []}></DishesXHourComponent> : <View></View>
+              auth.type_business == 'restaurante' || auth.type_business == 'Restaurante' ? <DishesXHourComponent sales={dishesXday ? dishesXday : []}></DishesXHourComponent> : <View></View>
             }
             {/** Grafica ventas por hora */}
 
             {/** Grafica categorias mas vendidas */}
             <MostSoldCategoriesComponent sales={mostSoldCategories}></MostSoldCategoriesComponent>
             {/** Grafica categorias mas vendidas */}
+
+
+            {/** Domicilios del dia */}
+            {
+              auth.type_business == 'restaurante' || auth.type_business == 'Restaurante' ? <DeliveriesComponent sales={deliveries}></DeliveriesComponent> : <View></View> 
+            }
+            {/** Domicilios del dia */}
 
             {/** Grafica metodos de pago */}
             <PaymentMethodsDayComponent sales={paymentsMethodsOfday}></PaymentMethodsDayComponent>
@@ -304,6 +384,16 @@ class HomeScreen extends React.Component {
             {/** Grafica de meta diaria */}
             <GoalComponent warehouse={infoWarehouse}></GoalComponent>
             {/** Grafica de meta diaria */}
+            
+            {/** Grafica productos mas vendidos */}
+            <MostSelledProducstComponent sales={mostSelledProducts}></MostSelledProducstComponent>
+            {/** Grafica productos mas vendidos */}
+
+            {/** Grafica promedio de atencion */}
+            {
+              auth.type_business == 'restaurante' || auth.type_business == 'Restaurante' ? <AverageAttentionComponent duration={averageAtention}></AverageAttentionComponent> : <View></View> 
+            }
+            {/** Grafica promedio de atencion */}
 
             {/** Almacen */}
             <View style={styles.containerButton}>
@@ -342,7 +432,10 @@ function mapStateToProps(state) {
     mostSoldCategories: state.chart.mostSoldCategories,
     dishesXday: state.chart.dishesSoldPerday,
     paymentsMethodsOfday:  state.chart.paymentsMethodsOfday,
-    daySales: state.chart.infoWarehouse
+    daySales: state.chart.infoWarehouse,
+    deliveries: state.chart.deliveries,
+    mostSelledProducts: state.chart.mostSelledProducts,
+    averageAtention: state.chart.averageAtention
   }
 }
 
@@ -358,7 +451,10 @@ export default connect(mapStateToProps, {
   getDishesSoldPerday,
   getPaymentsMethodsOfday,
   getInfoWarehouses,
-  setIntervalRequest
+  setIntervalRequest,
+  getDeliveries,
+  getMostSelledProducts,
+  getAverageAtention
 })(HomeScreen);
 
 const styles = StyleSheet.create({
@@ -431,7 +527,8 @@ const styles = StyleSheet.create({
     //width: '95%', // is 50% of container width
     flexDirection: 'row',
     paddingLeft: '2.5%',
-    paddingRight: '2.5%'
+    paddingRight: '2.5%',
+    paddingTop: 10,
   },
   buttonContainer: {
       flex: 1,

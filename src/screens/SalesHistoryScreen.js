@@ -85,8 +85,8 @@ class SalesHistoryScreen extends React.Component {
     utilidad
     precio_venta
     */
-    const totalA = parseFloat(a.count_productos) * parseFloat(a.precio_venta);
-    const totalB = parseFloat(b.count_productos) * parseFloat(b.precio_venta);
+    const totalA = parseFloat(a.count_productos) ;
+    const totalB = parseFloat(b.count_productos) ;
     if (totalA < totalB) return 1;
     if (totalB < totalA) return -1;
     return 0;
@@ -336,7 +336,8 @@ class SalesHistoryScreen extends React.Component {
                               }}
                               key={producto.nombre}>
                               <Text style={{ width: '50%', fontSize: 16, color: 'grey',  textAlign: 'left' }}>{producto.nombre.slice(0, 20)} </Text>
-                              { formatNumber((parseFloat(producto.count_productos) * parseFloat(producto.precio_venta)),  reportData[0].simbolo, { fontFamily: "Nunito-Bold",fontSize: 20, textAlign: 'right'})}
+                              <Text style={{ width: '10%', fontSize: 16, color: 'grey',  textAlign: 'left' }}>{producto.count_productos} </Text>
+                              { formatNumber((parseFloat(producto.count_productos) * parseFloat(producto.precio_venta)),  reportData[0].simbolo, { width: '40%', fontFamily: "Nunito-Bold",fontSize: 20, textAlign: 'right'})}
                             </View>
                           ) :
                           <Text style={{ fontSize: 20,fontFamily: "Nunito-Bold",  textAlign: 'right' }}>$ 0 </Text>

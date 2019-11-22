@@ -1,12 +1,14 @@
 // types
 import {
     LOGOUT,
-    LOGIN
+    LOGIN,
+    LOADING
 } from '../actions/types';
 
 const preloadedState = {
     data: {},
-    isAuthenticated: false
+    isAuthenticated: false,
+    loading: true
 };
 
 export default (state = preloadedState, { payload, type }) => {
@@ -18,6 +20,11 @@ export default (state = preloadedState, { payload, type }) => {
             };
         case LOGOUT:
             return preloadedState;
+        case LOADING:
+            return {
+                ...state,
+                loading: payload
+            }
 
         default:
             return state;

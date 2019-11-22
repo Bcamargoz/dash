@@ -2,15 +2,9 @@ import axios from 'axios';
 import { showMessage } from 'react-native-flash-message';
 import AsyncStorage from '@react-native-community/async-storage';
 import * as actions from './types';
-import MixpanelService from '../services/MixpanelService';
-import RouterService from '../services/RouterService';
 import store from '../store';
 import config from '../vars/config';
 import { getHeaders, getHeadersBeta } from '../actions/baseActions';
-
-const clearStorage = async () => {
-    await AsyncStorage.clear();
-}
 
 export const getAllData = data => async (dispatch) => {
     if (store.getState().network.isConnected) {
@@ -305,11 +299,16 @@ export const getMostSoldCategories = data => async (dispatch) => {
 
 export const getMostSelledProducts = data => async (dispatch) => {
     if (store.getState().network.isConnected) {
-        await dispatch(showLoading());
+        //await dispatch(showLoading());
 
-        await axios.post(`${config.BASE_URL}/login`, data)
+        await axios.get(`${config.BASE_URL}/dashboard/most-selled-products/${data}`,{
+                headers: getHeaders(),
+            })
             .then(function ({ data, headers }) {
-                dispatch(validateLogin(data, headers.date));
+                dispatch({
+                    type: actions.GET_MOST_SELLED_PRODUCTS,
+                    payload: data
+                });
             })
             .catch(function (error) {
                 const { data, status } = error.response;
@@ -330,7 +329,7 @@ export const getMostSelledProducts = data => async (dispatch) => {
                 });
             })
             .finally(function () {
-                dispatch(hideLoading());
+                //dispatch(hideLoading());
             });
     } else {
         showMessage({
@@ -342,11 +341,16 @@ export const getMostSelledProducts = data => async (dispatch) => {
 
 export const getAverageAtention = data => async (dispatch) => {
     if (store.getState().network.isConnected) {
-        await dispatch(showLoading());
+        //await dispatch(showLoading());
 
-        await axios.post(`${config.BASE_URL}/login`, data)
+        await axios.get(`${config.BASE_URL}/dashboard/average-attention/${data}`,{
+                headers: getHeaders(),
+            })
             .then(function ({ data, headers }) {
-                dispatch(validateLogin(data, headers.date));
+                dispatch({
+                    type: actions.GET_AVERAGE_ATENTION,
+                    payload: data
+                });
             })
             .catch(function (error) {
                 const { data, status } = error.response;
@@ -367,7 +371,7 @@ export const getAverageAtention = data => async (dispatch) => {
                 });
             })
             .finally(function () {
-                dispatch(hideLoading());
+                //dispatch(hideLoading());
             });
     } else {
         showMessage({
@@ -463,11 +467,17 @@ export const getLastSevenDays = data => async (dispatch) => {
 
 export const getDeliveries = data => async (dispatch) => {
     if (store.getState().network.isConnected) {
-        await dispatch(showLoading());
+        //await dispatch(showLoading());
 
-        await axios.post(`${config.BASE_URL}/login`, data)
+        await axios.get(`${config.BASE_URL}/dashboard/domicilies/${data}`,{
+            headers: getHeaders(),
+        })
             .then(function ({ data, headers }) {
-                dispatch(validateLogin(data, headers.date));
+                console.log('aqui', data);
+                dispatch({
+                    type: actions.GET_DELIVERIES,
+                    payload: data
+                });
             })
             .catch(function (error) {
                 const { data, status } = error.response;
@@ -488,7 +498,7 @@ export const getDeliveries = data => async (dispatch) => {
                 });
             })
             .finally(function () {
-                dispatch(hideLoading());
+                //dispatch(hideLoading());
             });
     } else {
         showMessage({
@@ -541,15 +551,12 @@ export const getWarehouse = data => async (dispatch) => {
 };
 
 export const getSalesHistory = data => async (dispatch) => {
-    console.warn(data);
     if (store.getState().network.isConnected) {
-        //await dispatch(showLoading());
-console.warn('antes post');
+        //await dispatch(showLoading());s
         await axios.post(`${config.BASE_BETA_URL}/saleshistory`, data , {
                 headers: await getHeadersBeta(),
             })
             .then(function ({ data, headers }) {
-                console.warn(data);
                 dispatch({
                     type: actions.GET_SALES_HISTORY,
                     payload: data

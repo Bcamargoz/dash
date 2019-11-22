@@ -5,7 +5,7 @@ import CardViewComponent from './CardViewComponent';
 import PieChartWithCenteredLabels from './PercentPie';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
-class MostSoldCategoriesComponent extends React.PureComponent {
+class DeliveriesComponent extends React.PureComponent {
 
     renderData(data) {
 
@@ -43,7 +43,13 @@ class MostSoldCategoriesComponent extends React.PureComponent {
         ]
 
         const randomColor = () => ('#' + (Math.random() * 0xFFFFFF << 0).toString(16) + '000000').slice(0, 7)
-        
+        let TotalDomicilios = 0;
+
+        sales
+        .map((value, index) => {
+          TotalDomicilios += value.qty;
+        });
+
         const pieData = sales
         .filter((item, index) => item.qty > 0 && index < 4)
         .map((value, index) => ({
@@ -53,8 +59,8 @@ class MostSoldCategoriesComponent extends React.PureComponent {
                 onPress: () => console.log(value.category, value.percent),
             },
             key: `pie-${index}`,
-            category: value.category,
-            percent: value.percent
+            category: value.domiciliary,
+            percent: ((value.qty * 100 ) / TotalDomicilios)
         }));
 
         const chart = () => (
@@ -83,11 +89,11 @@ class MostSoldCategoriesComponent extends React.PureComponent {
 
         return (
             <>
-                <CardViewComponent icon={false} titulo="Categorias mas vendidas" component={chart} ></CardViewComponent>
+                <CardViewComponent icon={false} titulo="Domicilios" component={chart} ></CardViewComponent>
             </>
         )
     }
 
 }
 
-export default MostSoldCategoriesComponent;
+export default DeliveriesComponent;
