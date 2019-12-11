@@ -92,7 +92,7 @@ export const login = data => async (dispatch) => {
 export const loginBeta = data => async (dispatch) => {
     if (store.getState().network.isConnected) {
         //await dispatch(showLoading());
-        await axios.post(`${config.BASE_BETA_URL}/login`, data)
+        await axios.post(`${config.BASE_URL}/login`, data)
             .then(async function ({ data, headers }) {
                 await AsyncStorage.setItem(`${config.KEY_STORAGE}loginBeta`, JSON.stringify(data));
             })

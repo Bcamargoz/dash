@@ -14,27 +14,10 @@ class SalesXHourComponent extends React.PureComponent {
     render() {
 
         const { sales } = this.props;
-        let data1 = [];
-        let data2 = [];
-        let labels2 = [];
-        let labels1 = [];
         let dataTotal = [];
         let labelTotal = [];
 
         sales.map( (sale, index) => {
-            if(index < 12) {
-                data1.push({
-                    value: sale.total,
-                    date: dateFns.setHours(new Date(), index)
-                })
-                labels1.push(sale.total)
-            } else {
-                data2.push({
-                    value: sale.total,
-                    date: dateFns.setHours(new Date(), index)
-                })
-                labels2.push(sale.total)
-            }
             dataTotal.push({
                 value: sale.total,
                 date: dateFns.setHours(new Date(), index)

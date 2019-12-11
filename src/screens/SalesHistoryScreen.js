@@ -19,7 +19,7 @@ import { connect } from 'react-redux';
 import { 
     getSalesHistory
 } from '../actions/chartActions';
-import { getLoginBetaData, logout } from '../actions/authActions';
+import { getLoginBetaData,getLoginData, logout } from '../actions/authActions';
 
 import moment from 'moment';
 
@@ -44,8 +44,9 @@ class SalesHistoryScreen extends React.Component {
   }
 
   async init() {
-    const { getLoginBetaData } = this.props;
-    const data = await getLoginBetaData();
+    const { getLoginData } = this.props;
+    const data = await getLoginData();
+    console.log(data)
     this.setState({ auth: data, warehouseSelected: data.warehouse.id, email: data.user.email }, () => {
       this.loadData(data.warehouse.id, { email: data.user.email, selectDate: this.state.selectDate } )
     });
@@ -335,8 +336,8 @@ class SalesHistoryScreen extends React.Component {
                                 flexDirection: 'row',
                               }}
                               key={producto.nombre}>
-                              <Text style={{ width: '50%', fontSize: 16, color: 'grey',  textAlign: 'left' }}>{producto.nombre.slice(0, 20)} </Text>
-                              <Text style={{ width: '10%', fontSize: 16, color: 'grey',  textAlign: 'left' }}>{producto.count_productos} </Text>
+                              <Text style={{ width: '50%', fontSize: 16, color: 'grey',  textAlign: 'left' }}>{producto.nombre.slice(0, 15 )} </Text>
+                              <Text style={{ width: '10%', fontSize: 16, color: 'grey',  textAlign: 'right' }}>{producto.count_productos} </Text>
                               { formatNumber((parseFloat(producto.count_productos) * parseFloat(producto.precio_venta)),  reportData[0].simbolo, { width: '40%', fontFamily: "Nunito-Bold",fontSize: 20, textAlign: 'right'})}
                             </View>
                           ) :
@@ -364,7 +365,8 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps, { 
     getSalesHistory,
-    getLoginBetaData
+    getLoginBetaData,
+    getLoginData
 })(SalesHistoryScreen);
 
 const styles = StyleSheet.create({

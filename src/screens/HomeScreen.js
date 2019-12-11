@@ -148,40 +148,6 @@ class HomeScreen extends React.Component {
     // Create the android notification channel
     firebase.notifications().android.createChannel(channel);
   };
-
-  notificate = async () => {
-    console.warn('aqui')
-    // Set up your listener
-    firebase.notifications().onNotificationOpened((notificationOpen) => {
-      AsyncStorage.setItem('first', JSON.stringify({ value:  true }));
-      const { navigation } = this.props;
-      navigation.navigate('SalesHistory');
-    });
-
-    // Build your notification
-    const title = Platform.OS === 'android' ? 'Informe Diario' : '';
-    const notification = new firebase.notifications.Notification()
-      .setNotificationId(Math.random().toString())
-      .setTitle(title)
-      .setSubtitle("Vendty")
-      .setBody('Tu informe diario de ventas esta listo!')
-      .android.setPriority(firebase.notifications.Android.Priority.Max)
-      .android.setChannelId('reminder')
-      .android.setAutoCancel(true)
-      .android.setSmallIcon('ic_push2') 
-      .android.setLargeIcon("ic_push")
-      .android.setVibrate([1000, 1000])
-      .android.setBigText("Vendty", "Informe de ventas listo", "Informe del " + moment().subtract(1, 'day').format("DD/MM/YYYY"))
-      .android.setBadgeIconType(firebase.notifications.Android.BadgeIconType.Large)
-      .android.setDefaults([firebase.notifications.Android.Defaults.Vibrate]);
-    // Build an action
-    const action = new firebase.notifications.Android.Action('test_action', 'ic', 'Ver informe');
-    // Add the action to the notification
-    notification.android.addAction(action);
-
-    // Display the notification
-    firebase.notifications().displayNotification(notification);
-  }
   
   checkPermission = async () => {
     const enabled = await firebase.messaging().hasPermission();

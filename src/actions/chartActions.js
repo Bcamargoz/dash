@@ -553,8 +553,8 @@ export const getWarehouse = data => async (dispatch) => {
 export const getSalesHistory = data => async (dispatch) => {
     if (store.getState().network.isConnected) {
         //await dispatch(showLoading());s
-        await axios.post(`${config.BASE_BETA_URL}/saleshistory`, data , {
-                headers: await getHeadersBeta(),
+        await axios.post(`${config.BASE_URL}/saleshistory`, data , {
+                headers: await getHeaders(),
             })
             .then(function ({ data, headers }) {
                 dispatch({
