@@ -169,21 +169,26 @@ const validateLicense = (expired_at, date) => {
 
 const validateLogin = (data, date) => async (dispatch) => {
     const { license } = data;
+    const { user } = data;
+
+    console.log(data);
 
     if (validateLicense(license.expired_at, date)) {
-        await setLogin(data);
-        MixpanelService.track('Login');
-        const initial = await firebase.notifications().getInitialNotification();
-        dispatch({
-            type: LOGIN,
-            payload: data
-        });
-        
-        if(initial) {
-            RouterService.navigate('SalesHistory');
-        } else {
-            RouterService.navigate('Home');
-        }  
+        if (user.is_admin) {
+            await setLogin(data);
+            MixpanelService.track('Login');
+            const initial = await firebase.notifications().getInitialNotification();
+            dispatch({
+                type: LOGIN,
+                payload: data
+            });
+            
+            if(initial) {
+                RouterService.navigate('SalesHistory');
+            } else {
+                RouterService.navigate('Home');
+            }  
+        }
     } else {
         clearStorage();
     }

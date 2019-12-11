@@ -49,7 +49,7 @@ class SalesLastSevenDaysComponent extends React.PureComponent {
 
         const chart = () => (
             <ScrollView horizontal={true} style={{}}>
-                <View style={{ height: 210,  width: 550, padding: 20, paddingTop: 30 }}>
+                <View style={{ height: 210,  width: 650, padding: 20, paddingTop: 30 }}>
                     <BarChart
                         style={{ flex: 1 }}
                         data={data}

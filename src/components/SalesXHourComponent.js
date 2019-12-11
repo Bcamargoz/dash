@@ -18,9 +18,10 @@ class SalesXHourComponent extends React.PureComponent {
         let labelTotal = [];
 
         sales.map( (sale, index) => {
+            const hora = index + 1;
             dataTotal.push({
                 value: sale.total,
-                date: dateFns.setHours(new Date(), index)
+                date: dateFns.setHours(new Date(), hora)
             })
             labelTotal.push(sale.total)
         });
